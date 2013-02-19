@@ -10,6 +10,8 @@ client.network.connect = function(){
 	var socket = client.network.socket = io.connect('http://'+window.location.hostname+'');
 	socket.on('connect', client.network.listeners.connect);
 	socket.on('disconnect', client.network.listeners.disconnect);
+	socket.on('question', client.network.listeners.question);
+	socket.on('joinResponse', client.network.listeners.joinResponse);
 	socket.on('playerJoin', client.network.listeners.playerJoin);
 	socket.on('playerStatus', client.network.listeners.playerStatus);
 	socket.on('playerLeave', client.network.listeners.playerLeave);

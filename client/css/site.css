@@ -326,22 +326,33 @@ border-top-right-radius: 4px;
 
 td.progress-cell{
 	position:relative;
-	padding:0;
+	padding:5px;
 	margin:0;
 }
 
 .progress-bar{
-	position:absolute;
-	display:block;
+	position:relative;
 	width:70%;
-	height:100%;
-	top:-1px;
+	height:30px;
 	background:#75DEFF;
+	border:1px solid #35CFFF;
 	border-top:1px solid #ADEBFF;
-	border-bottom:1px solid #35CFFF;
-	line-height:45px;
+	box-shadow:#35CFFF 0px -1px 1px;
+	border-radius:3px;
+	line-height:30px;
+	color:#000;
+	text-shadow:#B0E6FF 1px 1px 1px;
 }
 
+/* 
+===============================================================
+ Join Row
+===============================================================
+*/
+
+#username{
+	width: 100px;
+}
 
 /* 
 ===============================================================

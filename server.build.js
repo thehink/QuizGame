@@ -11,11 +11,11 @@ var server = {
 	 lastFrame: 0,
  };
  
- client.dispatch = function(){
+ server.dispatch = function(){
 	
 };
 
-client.bind = function(){
+server.bind = function(){
 	
 };
  
