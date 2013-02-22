@@ -8,10 +8,29 @@ client.network.init = function(){
 
 client.network.connect = function(){
 	var socket = client.network.socket = io.connect('http://'+window.location.hostname+'');
+	
+	//connection
 	socket.on('connect', client.network.listeners.connect);
 	socket.on('disconnect', client.network.listeners.disconnect);
-	socket.on('question', client.network.listeners.question);
+	
+	
+	//login
 	socket.on('joinResponse', client.network.listeners.joinResponse);
+	socket.on('playerData', client.network.listeners.playerData);
+	
+	//lobby
+	socket.on('joinLobby', client.network.listeners.joinLobby);
+	socket.on('leaveLobby', client.network.listeners.leaveLobby);
+	socket.on('lobbyClosed', client.network.listeners.lobbyClosed);
+	socket.on('syncPlayers', client.network.listeners.syncPlayers);
+	
+	//quiz
+	socket.on('quizInfo', client.network.listeners.quizInfo);
+	socket.on('quizQuestion', client.network.listeners.quizQuestion);
+	socket.on('quizAnswer', client.network.listeners.quizAnswer);
+	socket.on('quizResults', client.network.listeners.quizResults);
+	
+	//player
 	socket.on('playerJoin', client.network.listeners.playerJoin);
 	socket.on('playerStatus', client.network.listeners.playerStatus);
 	socket.on('playerLeave', client.network.listeners.playerLeave);
@@ -21,12 +40,22 @@ client.network.connect = function(){
 
 client.network.join = function(username){
 	if(client.network.connected){
-		client.network.socket.emit('join', username);
+		client.network.emit('join', username);
 	}else{
 		alert("Not connected to server!");
 	}
 };
 
+
+client.network.sendCommand = function(cmd){
+	client.network.emit('cmd', cmd);
+};
+
+client.network.emit = function(tag, data){
+	if(client.network.connected){
+		client.network.socket.emit(tag, data);
+	}
+};
 
 client.network.listeners = {};
 
@@ -40,14 +69,89 @@ client.network.listeners.disconnect = function(data){
 	client.dispatch('disconnected');
 };
 
+/*=================================
+			Login
+==================================*/
+
+client.network.listeners.joinResponse = function(data){
+	if(data == 1){
+		client.ui.hideJoin();
+	}else{
+		switch(data){
+			case 2: 
+				alert("Användarnamnet används redan!");
+				break;
+			case 3: 
+				alert("Fel på servern!");
+		}
+	}
+};
+
+client.network.listeners.playerData = function(data){
+	client.setPlayer(data);
+};
+
+/*=================================
+			Quiz
+==================================*/
+
+client.network.listeners.quizInfo = function(data){
+	client.ui.setQuiz(data);
+};
+
+client.network.listeners.quizQuestion = function(data){
+	/*	data - structure
+	
+		data = {
+			question: "html string",
+			aternatives: ["array", "of", "strings"],
+			points: 5,
+		}
+	
+	*/
+};
+
+client.network.listeners.quizAnswer = function(data){
+	client.quiz.correctAnswer(data);
+};
+
+
+client.network.listeners.quizResults = function(data){
+};
+
+
+/*=================================
+			Lobby
+==================================*/
+
+client.network.listeners.syncPlayers = function(data){
+	client.quiz.syncPlayers(data);
+};
+
+client.network.listeners.joinLobby = function(data){
+	client.ui.setLobby(data);
+	client.ui.setQuiz(data.quiz);
+};
+
+client.network.listeners.leaveLobby = function(data){
+};
+
+client.network.listeners.lobbyClosed = function(data){
+	alert("lobbyClosed");
+};
+
+/*=================================
+			Players
+==================================*/
+
 client.network.listeners.playerJoin = function(data){
-	client.dispatch('playerJoin', data);
+	client.quiz.join(data);
 };
 
 client.network.listeners.playerStatus = function(data){
-	client.dispatch('playerStatus', data);
+	client.quiz.status(data);
 };
 
 client.network.listeners.playerLeave = function(data){
-	client.dispatch('playerLeave', data);
+	client.quiz.leave(data);
 };

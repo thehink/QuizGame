@@ -14,20 +14,49 @@
 <script src="./client.build.js"></script>
 </head>
 <body>
+<script type="text/html" id="item_tmpl">
+	<table cellspacing="0" id="result-table">
+      <!-- cellspacing='0' is important, must stay -->
+      <tr>
+        <th id="username-column">Användarnamn</th>
+        <th id="progress-column">Poäng</th>
+        <th id="win-column"></th>
+      </tr>
+      <!-- Table Header -->
+
+    
+      <tr id="join-row">
+        <td><input id="username-input" type="text" placeholder="Användarnamn"/></td>
+        <td><input id="join-button" class="button" type="button"  value="Hoppa in"/></td>
+        <td></td>
+      </tr>
+    </table>
+</script>
+
+
 <header>
   <div id="logo"><img alt="crown" src="./images/crown.svg"/><div>Kings Quiz</div></div>
   <div class="dark-border"></div>
   <nav>
+  	<div id="lobbyLink" class="active">
+      	<div>
+            <a href="#">
+                <div id="lobby-title">Kung quiz</div>
+                <div id="quiz-title">quiz-title</div>
+            </a>
+        </div>
+      </div>
     <div>
       <ul class="left-nav">
+      	<li><a href="#">Lobbies</a> </li>
         <li><a href="#">Hur man spelar</a> </li>
       </ul>
       <ul class="right-nav">
         
-        <li><a href="#">Om</a>
+        <li><a id="username" href="#">...</a>
           <ul>
-            <li><a href="#">Category</a></li>
-            <li><a href="#">Category</a></li>
+          	<li><a href="#">Konto</a></li>
+            <li><a href="#">Logga ut</a></li>
           </ul>
         </li>
       </ul>
@@ -45,35 +74,10 @@
         <th id="win-column"></th>
       </tr>
       <!-- Table Header -->
-      <tr>
-        <td>Adam</td>
-        <td class="progress-cell"><div class="progress-bar" style="width:10%;">10%</div></td>
-        <td>.</td>
-      </tr>
-      <!-- Table Row -->
-      <tr class='even'>
-        <td>Någon</td>
-        <td class="progress-cell"><div class="progress-bar" style="width:70%;">70%</div></td>
-        <td>.</td>
-      </tr>
-      <!-- Darker Table Row -->
-      <tr>
-        <td>Någon annan</td>
-        <td class="progress-cell"><div class="progress-bar" style="width:40%;">40%</div></td>
-        <td>No</td>
-      </tr>
-      <tr class='even'>
-        <td>ss</td>
-        <td class="progress-cell"><div class="progress-bar" style="width:10%;">10%</div></td>
-        <td>.</td>
-      </tr>
-      <tr>
-        <td>Benja</td>
-        <td class="progress-cell"><div class="progress-bar" style="width:100%;">100%</div></td>
-        <td>.</td>
-      </tr>
+
+    
       <tr id="join-row">
-        <td><input id="username" type="text" placeholder="Användarnamn"/></td>
+        <td><input id="username-input" type="text" placeholder="Användarnamn"/></td>
         <td><input id="join-button" class="button" type="button"  value="Hoppa in"/></td>
         <td></td>
       </tr>
@@ -108,5 +112,6 @@
   <div class="clear"></div>
 </div>
 <footer> &copy; Benjamin & Adam, TE11A - 2013 </footer>
+<div id="console"><input type="text"/></div>
 </body>
 </html>

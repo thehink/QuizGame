@@ -11,14 +11,8 @@ var server = {
 	 lastFrame: 0,
  };
  
- server.dispatch = function(){
-	
-};
-
-server.bind = function(){
-	
-};
  
  server.init = function(){
 	 server.network.init();
+	 server.quiz.init();
  };

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"  />
+<title>Kings Quiz</title>
+<link href='http://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
+<link href="./css/table.css" rel="stylesheet" />
+<link href="./css/site.css" rel="stylesheet" />
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="./socket.io/socket.io.js"></script>
+<script src="./client.build.js"></script>
+</head>
+<body>
+<header>
+  <div id="logo"><img alt="crown" src="./images/crown.svg"/>
+    <div>Kings Quiz</div>
+  </div>
+  <div class="dark-border"></div>
+  <nav>
+    <div>
+      <ul class="left-nav">
+        <li><a href="#">Lobbies</a> </li>
+        <li><a href="#">Hur man spelar</a> </li>
+      </ul>
+      <ul class="right-nav">
+        <li><a href="#">...</a>
+          <ul>
+            <li><a href="#">Konto</a></li>
+            <li><a href="#">Logga ut</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="clear"></div>
+  </nav>
+</header>
+<div id="main-wrapper">
+  <section id="main-content" class="browse-page">
+    <div class="left_menu">
+      <h1>Quizes</h1>
+      <ul>
+        <li class="active"><a href="#">Aktiva</a></li>
+        <li><a href="#">...</a></li>
+        <li class="cat-separator">...</li>
+        <li><a href="#">...</a></li>
+      </ul>
+    </div>
+    <div class="right_content">
+      <div class="top-filter">
+        <input type="text"/>
+        <input type="button" value="Sök"/> &middot;
+        <a href="#">Uppdatera list</a> &middot;
+        <a href="#">Skapa en lobby</a>
+      </div>
+      <div class="items">
+      	
+        <div class="item"> <a href="">
+          <h2>Sveriges Kungar</h2>
+          <div class="info"> En quiz om sveriges kungar. blablalbbla</div>
+          <div class="min-info">Frågor: <span class="black">20st</span> &middot; Deltagare: <span class="green">14st</span> &middot; Svårighetsgrad: <span class="yellow">medel</span> &middot; Skapad av: <span class="blue">Benja</span></div>
+          </a></div>
+          
+          
+          <div class="item"> <a href="">
+          <h2>Sveriges Kungar</h2>
+          <div class="info"> En quiz om sveriges kungar. blablalbbla</div>
+          <div class="min-info">Frågor: <span class="black">20st</span> &middot; Deltagare: <span class="green">14st</span> &middot; Svårighetsgrad: <span class="yellow">medel</span> &middot; Skapad av: <span class="blue">Benja</span></div>
+          </a></div>
+
+
+<div class="item"> <a href="">
+          <h2>Sveriges Kungar</h2>
+          <div class="info"> En quiz om sveriges kungar. blablalbbla</div>
+          <div class="min-info">Frågor: <span class="black">20st</span> &middot; Deltagare: <span class="green">14st</span> &middot; Svårighetsgrad: <span class="yellow">medel</span> &middot; Skapad av: <span class="blue">Benja</span></div>
+          </a></div>
+
+
+        
+        <div class="clear"></div>
+      </div>
+    </div>
+  </section>
+  <aside id="side-content"> </aside>
+  <div class="clear"></div>
+</div>
+<footer> &copy; Benjamin & Adam, TE11A - 2013 </footer>
+</body>
+</html>

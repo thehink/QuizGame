@@ -1,0 +1,48 @@
+{
+    "title": "kings quiz",
+	"difficulty": "medium",
+    "questions": [
+        {
+            "question": "Vad heter kungen?",
+            "answers": [
+                "Adam",
+                "Gustav",
+                "Karl",
+                "Inget",
+                "..."
+            ],
+            "correct": [
+                0
+            ],
+            "time": 30
+        },
+        {
+            "question": "Vad heter kungen?",
+            "answers": [
+                "Adam",
+                "Gustav",
+                "Karl",
+                "Inget",
+                "..."
+            ],
+            "correct": [
+                0
+            ],
+            "time": 30
+        },
+        {
+            "question": "Vad heter kungen?",
+            "answers": [
+                "Adam",
+                "Gustav",
+                "Karl",
+                "Inget",
+                "..."
+            ],
+            "correct": [
+                0
+            ],
+            "time": 30
+        }
+    ]
+}
