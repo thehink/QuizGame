@@ -3,8 +3,9 @@ server.user = function(username){
 	this.username = username || "Undefined";
 	this.points = 0;
 	this.wins = 0;
-	this.wrong = 0;
+	this.incorrect = 0;
 	this.correct = 0;
+	this.icRatio = 0;
 	this.connected = false;
 	this.currentLobby = {};
 };
@@ -15,8 +16,9 @@ server.user.prototype.getInfo = function(){
 		username: this.username,
 		points: this.points,
 		wins: this.wins,
-		wrong: this.wrong,
+		incorrect: this.incorrect,
 		correct: this.correct,
+		icRatio: this.icRatio,
 	};
 };
 

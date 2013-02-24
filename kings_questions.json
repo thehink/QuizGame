@@ -1,5 +1,5 @@
 {
-    "title": "kings quiz",
+    "title": "Kungar, Politik och kvinnor",
 	"difficulty": "medium",
     "questions": [
         {
@@ -14,7 +14,8 @@
             "correct": [
                 0
             ],
-            "time": 30
+			"points": 2,
+            "time": 5
         },
         {
             "question": "Vad heter kungen?",
@@ -28,7 +29,8 @@
             "correct": [
                 0
             ],
-            "time": 30
+			"points": 5,
+            "time": 5
         },
         {
             "question": "Vad heter kungen?",
@@ -42,7 +44,8 @@
             "correct": [
                 0
             ],
-            "time": 30
+			"points": 10,
+            "time": 5
         }
     ]
 }

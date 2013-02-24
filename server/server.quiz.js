@@ -24,6 +24,9 @@ server.quiz.setPlayerOffline = function(player){
 };
 
 server.quiz.login = function(username, socket){
+	if(socket.player)
+		return 3;
+		
 	var player = server.quiz.getUser(username);
 	if(!player){
 		player = server.quiz.addUser(username, socket);

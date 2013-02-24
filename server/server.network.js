@@ -18,7 +18,7 @@ server.network.init = function(){
 		  socket.on('join', server.network.listeners.join);
 		  socket.on('disconnect', server.network.listeners.leave);
 		  socket.on('leave', server.network.listeners.leave);
-		  socket.on('answer', server.network.listeners.answer);
+		  //socket.on('answer', server.network.listeners.answer);
 		  socket.on('msg', server.network.listeners.msg);
 		  socket.on('getLobbies', server.network.listeners.ready);
 		  socket.on('createLobby', server.network.listeners.createLobby);

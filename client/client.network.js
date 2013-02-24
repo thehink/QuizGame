@@ -27,8 +27,11 @@ client.network.connect = function(){
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
 	socket.on('quizQuestion', client.network.listeners.quizQuestion);
+	socket.on('quizQuestionTimeLeft', client.ui.setTimeLeft);
 	socket.on('quizAnswer', client.network.listeners.quizAnswer);
-	socket.on('quizResults', client.network.listeners.quizResults);
+	socket.on('notifyNextQuestion', client.network.listeners.notifyNextQuestion);
+	socket.on('quizEndOfRound', client.network.listeners.quizEndOfRound);
+	socket.on('quizReset', client.network.listeners.quizReset);
 	
 	//player
 	socket.on('playerJoin', client.network.listeners.playerJoin);
@@ -46,6 +49,10 @@ client.network.join = function(username){
 	}
 };
 
+client.network.chooseAnswer = function(answer){
+	client.network.emit("answer", answer);
+};
+
 
 client.network.sendCommand = function(cmd){
 	client.network.emit('cmd', cmd);
@@ -61,12 +68,12 @@ client.network.listeners = {};
 
 client.network.listeners.connect = function(data){
 	client.network.connected = true;
-	client.dispatch('connected');
+	//client.dispatch('connected');
 };
 
 client.network.listeners.disconnect = function(data){
 	client.network.connected = false;
-	client.dispatch('disconnected');
+	//client.dispatch('disconnected');
 };
 
 /*=================================
@@ -82,6 +89,9 @@ client.network.listeners.joinResponse = function(data){
 				alert("Användarnamnet används redan!");
 				break;
 			case 3: 
+				alert("Du är redan inloggad med ett annat användarnamn!");
+			break;
+			default:
 				alert("Fel på servern!");
 		}
 	}
@@ -100,25 +110,24 @@ client.network.listeners.quizInfo = function(data){
 };
 
 client.network.listeners.quizQuestion = function(data){
-	/*	data - structure
-	
-		data = {
-			question: "html string",
-			aternatives: ["array", "of", "strings"],
-			points: 5,
-		}
-	
-	*/
+	client.quiz.setQuestion(data);
 };
 
 client.network.listeners.quizAnswer = function(data){
 	client.quiz.correctAnswer(data);
 };
 
-
-client.network.listeners.quizResults = function(data){
+client.network.listeners.notifyNextQuestion = function(time){
+	client.ui.notifyNextQuestion(time);
 };
 
+client.network.listeners.quizEndOfRound = function(data){
+	client.quiz.quizEndOfRound(data);
+};
+
+client.network.listeners.quizReset = function(){
+	client.ui.quizReset();
+};
 
 /*=================================
 			Lobby
@@ -128,9 +137,8 @@ client.network.listeners.syncPlayers = function(data){
 	client.quiz.syncPlayers(data);
 };
 
-client.network.listeners.joinLobby = function(data){
-	client.ui.setLobby(data);
-	client.ui.setQuiz(data.quiz);
+client.network.listeners.joinLobby = function(lobby){
+	client.quiz.setLobby(lobby);
 };
 
 client.network.listeners.leaveLobby = function(data){

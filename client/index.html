@@ -5,6 +5,7 @@
 <title>Kings Quiz</title>
 <link href='http://fonts.googleapis.com/css?family=Contrail+One' rel='stylesheet' type='text/css'>
 <link href="./css/table.css" rel="stylesheet" />
+<link href="./css/clock.css" rel="stylesheet" />
 <link href="./css/site.css" rel="stylesheet" />
 <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -14,48 +15,58 @@
 <script src="./client.build.js"></script>
 </head>
 <body>
-<script type="text/html" id="item_tmpl">
-	<table cellspacing="0" id="result-table">
-      <!-- cellspacing='0' is important, must stay -->
-      <tr>
-        <th id="username-column">Användarnamn</th>
-        <th id="progress-column">Poäng</th>
-        <th id="win-column"></th>
-      </tr>
-      <!-- Table Header -->
-
-    
-      <tr id="join-row">
-        <td><input id="username-input" type="text" placeholder="Användarnamn"/></td>
-        <td><input id="join-button" class="button" type="button"  value="Hoppa in"/></td>
-        <td></td>
-      </tr>
-    </table>
-</script>
-
-
+<div id="modal-overlay">
+  <div class="modal-box">
+    <h1>Ange ett användarnamn</h1>
+    <div class="content">
+      <input id="username-input" type="text" placeholder="Användarnamn"/>
+    </div>
+    <div class="footer">
+      <div class="right">
+        <input id="join-button" type="button" value="Ok"/>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>
 <header>
-  <div id="logo"><img alt="crown" src="./images/crown.svg"/><div>Kings Quiz</div></div>
+  <div id="logo"><img alt="crown" src="./images/crown.svg"/>
+    <div>Kings Quiz</div>
+  </div>
   <div class="dark-border"></div>
   <nav>
-  	<div id="lobbyLink" class="active">
-      	<div>
-            <a href="#">
-                <div id="lobby-title">Kung quiz</div>
-                <div id="quiz-title">quiz-title</div>
-            </a>
-        </div>
+    <div id="lobbyLink" class="active">
+      <div class="bg-overlay">
+        <div> <a href="#">
+         <div id="default-msg">
+          	<div id="lobby-title">Kung quiz</div>
+          	<div id="quiz-title">quiz-title</div>
+          </div>
+          <div id="display-answer">
+          	
+          </div>
+          <div id="coundownclock" class="blue clock">
+            <div id="timeleft" class="display">0</div>
+            <div class="front left"></div>
+            <div class="rotate left" style="-webkit-transform: rotate(180deg);">
+              <div class="bg left"></div>
+            </div>
+            <div class="rotate right" style="display: block; -webkit-transform: rotate(156deg);">
+              <div class="bg right"></div>
+            </div>
+          </div>
+          </a> </div>
       </div>
+    </div>
     <div>
       <ul class="left-nav">
-      	<li><a href="#">Lobbies</a> </li>
+        <li><a href="#">Lobbies</a> </li>
         <li><a href="#">Hur man spelar</a> </li>
       </ul>
       <ul class="right-nav">
-        
         <li><a id="username" href="#">...</a>
           <ul>
-          	<li><a href="#">Konto</a></li>
+            <li><a href="#">Konto</a></li>
             <li><a href="#">Logga ut</a></li>
           </ul>
         </li>
@@ -74,44 +85,24 @@
         <th id="win-column"></th>
       </tr>
       <!-- Table Header -->
-
-    
-      <tr id="join-row">
-        <td><input id="username-input" type="text" placeholder="Användarnamn"/></td>
-        <td><input id="join-button" class="button" type="button"  value="Hoppa in"/></td>
-        <td></td>
-      </tr>
     </table>
   </section>
   <aside id="side-content">
-    <div class="side-item timer-box">
-      <h2>Välj ett alternativ innan tiden tar slut</h2>
-      <div class="wrapper tensec">
-        <div class="spinner pie"></div>
-        <div class="filler pie"></div>
-        <div class="mask"></div>
-        <span id="timer">00:00</span>
-      </div>
-    </div>
     <div class="side-item question-box">
-      <h2>Fråga 1 av 6</h2>
-      <div id="question">
-      	<!--<img src="http://static-cdn.jtvnw.net/previews-ttv/live_user_mlgsc2-320x200.jpg"/>-->
-      Vad heter kungen?</div>
+      <h2 id="question-title">Väntar på nästa fråga</h2>
+      <div id="question"></div>
     </div>
     <div class="side-item answer-box">
-      <h2>Välj rätt alternativ</h2>
-      <ul class="answer-list">
-        <li>Gustav</li>
-        <li>Adam</li>
-        <li>...</li>
-        <li>...</li>
+      <h2>Väntar på nästa fråga</h2>
+      <ul id="answer_list" class="answer-list">
       </ul>
     </div>
   </aside>
   <div class="clear"></div>
 </div>
 <footer> &copy; Benjamin & Adam, TE11A - 2013 </footer>
-<div id="console"><input type="text"/></div>
+<div id="console">
+  <input type="text"/>
+</div>
 </body>
 </html>

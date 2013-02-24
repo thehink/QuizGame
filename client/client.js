@@ -6,16 +6,11 @@ client.init = function(){
 	client.network.init();
 	client.quiz.init();
 	client.enableListeners();
+	
+	client.ui.showLogin(client.join);
 };
 
-Events.enable.call(client);
-
-
 client.enableListeners = function(){
-
-	$("#join-button").click(client.join);
-	$("#username-input").focus(client.usernameFocus);
-
 	$(document).keydown(function(event){
 		if(event.which == 9){
 			client.ui.showConsole();
@@ -34,7 +29,6 @@ client.enableListeners = function(){
 
 client.setPlayer = function(data){
 	$("#username").text(data.username);
-	console.log("SetPlayer:", data);
 };
 
 client.join = function(){
@@ -45,6 +39,8 @@ client.join = function(){
 		alert("Du måste skriva in ett användarnamn i rutan");
 		$("#username-input").focus().addClass("blinking");
 	}
+	
+	return false;
 };
 
 client.usernameFocus = function(){
