@@ -1,51 +1,144 @@
 {
     "title": "Kungar, Politik och kvinnor",
-	"difficulty": "medium",
+    "difficulty": "medium",
     "questions": [
         {
-            "question": "Vad heter kungen?",
+            "question": "Vilken svensk kung har titeln \"Karl med Guds nåde\"?",
             "answers": [
-                "Adam",
-                "Gustav",
-                "Karl",
-                "Inget",
-                "..."
+                "Karl XII",
+                "Gustav Vasa",
+                "Erik XIV",
+                "Karl IX"
             ],
             "correct": [
                 0
             ],
-			"points": 2,
-            "time": 5
+            "points": 5,
+            "time": 30
         },
         {
-            "question": "Vad heter kungen?",
+            "question": "Vilken svensk kung införde arvsmonarkin som har format Sverige som vi ser idag?",
             "answers": [
-                "Adam",
-                "Gustav",
-                "Karl",
-                "Inget",
-                "..."
+                "Fredrik den Förste",
+                "Karl XIV Johan",
+                "Gustav Vasa",
+                "Martin Braxenthaler"
             ],
             "correct": [
-                0
+                2
             ],
-			"points": 5,
-            "time": 5
+            "points": 5,
+            "time": 30
         },
         {
-            "question": "Vad heter kungen?",
+            "question": "Vad hette Sveriges första kung?",
             "answers": [
-                "Adam",
-                "Gustav",
-                "Karl",
-                "Inget",
-                "..."
+                "Gustav Vasa",
+                "Olöf Skötkonung",
+                "Birger Jarl"
+            ],
+            "correct": [
+                1
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Har Sverige haft en kvinnlig statsminister?",
+            "answers": [
+                "Nej",
+                "Ja",
+                "Kanske"
             ],
             "correct": [
                 0
             ],
-			"points": 10,
-            "time": 5
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Vad hette Sveriges första statsminister?",
+            "answers": [
+                "Olof Palme",
+                "Carl Johan Thyselius",
+                "Louise De Geer",
+                "Gillis Bildt"
+            ],
+            "correct": [
+                2
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Vad hette det Svenska slottet som brann ner 7 Maj 1669?",
+            "answers": [
+                "Brahehus",
+                "Läckö slott",
+                "Fullerö slott",
+                "Tre Kronor"
+            ],
+            "correct": [
+                3
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Hur många riksdagsledamöter finns det i Sveriges riksdag",
+            "answers": [
+                "349st",
+                "143st",
+                "350st",
+                "Inga alls"
+            ],
+            "correct": [
+                0
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Vad heter den svenske kungen Sigismund far?",
+            "answers": [
+                "Gustav II Adolf",
+                "Sten Sture den äldre",
+                "Johan III",
+                "Gustav V"
+            ],
+            "correct": [
+                2
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Vilket år fick kvinnor rösträtt i Sverige?",
+            "answers": [
+                "De har ingen rösträtt",
+                "24 Maj 1919",
+                "30 Mars 1945",
+                "14 Februari 1870"
+            ],
+            "correct": [
+                1
+            ],
+            "points": 5,
+            "time": 30
+        },
+        {
+            "question": "Vad heter den svenske kungen Sigismund far?",
+            "answers": [
+                "Gustav II Adolf",
+                "Sten Sture den äldre",
+                "Johan III",
+                "Adam Brodd"
+            ],
+            "correct": [
+                0
+            ],
+            "points": 5,
+            "time": 30
         }
     ]
 }

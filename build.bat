@@ -1,7 +1,7 @@
 echo "" > client/client.build.js
 echo "" > server.build.js
 
-cd .\client\
+cd .\client_js\
 copy /b ^
 .\lib\*.js + ^
 client.js + ^

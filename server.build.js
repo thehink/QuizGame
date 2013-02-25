@@ -1,9 +1,9 @@
 var modulesPath = "./nodejs/node_modules/";
 
 var app = require('http'),
-  io = require(modulesPath+'socket.io'),
+  io = require('socket.io'),
   fs = require('fs'),
-  static = require(modulesPath+'node-static');
+  static = require('node-static');
 
 	
 var server = {

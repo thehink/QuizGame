@@ -1,0 +1,15 @@
+{
+    "name": "QuizGame",
+    "subdomain": "quizgame",
+    "scripts": {
+        "start": "server.build.js"
+    },
+    "version": "0.1.0-2",
+    "dependencies": {
+        "socket.io": "0.9.11",
+        "node-static": "0.6.4"
+    },
+    "engines": {
+        "node": "0.8.x"
+    }
+}
