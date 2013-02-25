@@ -27,6 +27,7 @@ var server = {
 	this.timeleft = 0;
 	this.running = false;
 	this.paused = false;
+	this.notifyTime = 10000;
 	
 	if(q)
 		this.loadQuiz(q);
@@ -72,14 +73,14 @@ server.lobby.prototype.stop = function(){
 
 server.lobby.prototype.waitNextQuestion = function(){
 	this.pause();
-	var notifyTime = 6000;
-	io.sockets.in(this.roomId).emit('notifyNextQuestion', notifyTime);
+	this.notifyStarted = Date.now();
+	io.sockets.in(this.roomId).emit('notifyNextQuestion', this.notifyTime);
 		
 	var that = this;
 	setTimeout(function(){
 			that.resume();
 			that.nextQuestion();
-	}, notifyTime);
+	}, this.notifyTime);
 }
 
 server.lobby.prototype.nextQuestion = function(){
@@ -174,14 +175,18 @@ server.lobby.prototype.join = function(player){
 		if(!this.player_stats[player.id])
 			this.player_stats[player.id] = 0;
 		
-		if(this.running){
+		if(this.running && !this.paused){
 			var cq = this.getCurrentQuestion();
 			player.socket.emit('quizQuestion', {
 				num: this.currentQuestion,
 				question: cq.question,
 				answers: cq.answers,
+				points: cq.points,
 				time: cq.time,
 			});	
+		}else if(this.running){
+			var cq = this.getCurrentQuestion();
+			player.socket.emit('notifyNextQuestion', this.notifyTime - Date.now() + this.notifyStarted);
 		}
 		
 		return true;
@@ -328,15 +333,20 @@ server.network.listeners.leave = function(data){
 
 server.network.listeners.cmd = function(cmd){
 	switch(cmd){
-		case "start":
+		case "/start":
 			server.quiz.lobbies[0].start();
 		break;
-		case "stop":
-			server.quiz.lobbies[0].stop();
+		case "/stop":
+			
 		break;
-		case "pause":
-			server.quiz.lobbies[0].pause();
+		case "/pause":
+			
 		break;
+		case "/msg":
+			
+		break;
+		default:
+		
 	}
 };
 
@@ -413,6 +423,13 @@ server.quiz.setPlayerOffline = function(player){
 server.quiz.login = function(username, socket){
 	if(socket.player)
 		return 3;
+	
+	var prevUsername = username;
+		username = username.replace(/[^a-z0-9_.]/gi, '');
+	
+	
+	if(prevUsername != username)
+		console.log('Invalid username, ', prevUsername + ', changed to:' + username);
 		
 	var player = server.quiz.getUser(username);
 	if(!player){

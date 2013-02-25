@@ -61,15 +61,20 @@ server.network.listeners.leave = function(data){
 
 server.network.listeners.cmd = function(cmd){
 	switch(cmd){
-		case "start":
+		case "/start":
 			server.quiz.lobbies[0].start();
 		break;
-		case "stop":
-			server.quiz.lobbies[0].stop();
+		case "/stop":
+			
 		break;
-		case "pause":
-			server.quiz.lobbies[0].pause();
+		case "/pause":
+			
 		break;
+		case "/msg":
+			
+		break;
+		default:
+		
 	}
 };
 

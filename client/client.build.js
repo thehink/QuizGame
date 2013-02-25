@@ -176,6 +176,7 @@ client.enableListeners = function(){
 	$("#console > input").keypress(function(event){
 		if(event.which == 13){
 			client.network.sendCommand($("#console > input").val());
+			$("#console > input").val('')
 			client.ui.hideConsole();
 		}
 	});
@@ -366,6 +367,12 @@ client.network.listeners.playerStatus = function(data){
 client.network.listeners.playerLeave = function(data){
 	client.quiz.leave(data);
 };
+/*********************************************
+	Client.Quiz.js
+	
+
+**********************************************/
+
 client.quiz = {
 	users: [],
 	currentQuiz: {},
@@ -433,8 +440,14 @@ client.quiz.correctAnswer = function(data){
 		
 	client.ui.setStats(stats);
 	client.ui.displayAnswers(players, correct);
-};client.ui = {};
+};/*********************************************
+	Client.UI.js
+	View
+	Everything that changes onscreen should be generated here
 
+**********************************************/
+
+client.ui = {};
 client.ui.addUser = function(player){
 	var pc = 100*player.points/client.quiz.currentQuiz.totalPoints;
 	
@@ -492,9 +505,8 @@ client.ui.setModal = function(title, content, buttons){
 		var btn = $('<input id="join-button" type="button" value="'+i+'"/>');
 		var btnClickEvent = buttons[i];
 		btn.click(function(){
-			if(btnClickEvent()){
-				$("#modal-overlay").fadeOut();
-			}
+			if(btnClickEvent())
+				$("#modal-overlay").fadeOut();		//fade out if click function return true
 		});
 		$(".modal-box > .footer > .right").append(btn);
 	}
@@ -547,7 +559,7 @@ client.ui.setQuestion = function(data){
 
 client.ui.notifyNextQuestion = function(time){
 	$("#lobbyLink").removeClass('running').addClass("blinking");
-	client.ui.NextQuestionCountdown(time/1000);
+	client.ui.NextQuestionCountdown(Math.round(time/1000));
 
 };
 
@@ -585,8 +597,12 @@ client.ui.displayAnswers = function(answers, correct){
 		var an = answers[i];
 		if(an == correct){
 			$('#player-'+i).addClass('correct');
-			$('#player-'+i + ' .points').text('+'+ client.quiz.currentQuestion.points +' Points').fadeIn(800, function(){
-				$(this).fadeOut(3000);
+			$('#player-'+i + ' .points').text('+'+ client.quiz.currentQuestion.points +' Points').animate({
+				opacity: 1.0,
+			}, 800, function(){
+				$(this).animate({
+					opacity: 0,
+				}, 3000);
 			});
 		}else
 			$('#player-'+i).addClass('incorrect');
@@ -636,9 +652,18 @@ client.ui.setCountdown = function(pc, text){
 	
 		$('.rotate.left').css('-webkit-transform', 'rotate('+ pc*360 + 'deg)');
 		$('.rotate.right').css('-webkit-transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
+		
+		$('.rotate.left').css('-moz-transform', 'rotate('+ pc*360 + 'deg)');
+		$('.rotate.right').css('-moz-transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
+		
+		$('.rotate.left').css('transform', 'rotate('+ pc*360 + 'deg)');
+		$('.rotate.right').css('transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
 	
-	if(pc >= 0.5)
+	if(pc >= 0.5){
 		$('.rotate.left').css('-webkit-transform', 'rotate('+ 180 + 'deg)');
+		$('.rotate.left').css('-moz-transform', 'rotate('+ 180 + 'deg)');
+		$('.rotate.left').css('transform', 'rotate('+ 180 + 'deg)');
+	}
 };
 
 client.ui.quizEndOfRound = function(results){
@@ -658,9 +683,7 @@ client.ui.quizEndOfRound = function(results){
 		
 		for(var i in results){
 			var res = results[i],
-				rt = (res.correct / res.incorrect);
-				
-			rt = rt == Infinity ? res.points : rt;
+				rt = res.incorrect == 0 ? (res.correct || 0) : (res.correct / res.incorrect);
 			
 			if(points > res.points){
 				points = res.points;

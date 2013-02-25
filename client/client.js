@@ -22,6 +22,7 @@ client.enableListeners = function(){
 	$("#console > input").keypress(function(event){
 		if(event.which == 13){
 			client.network.sendCommand($("#console > input").val());
+			$("#console > input").val('')
 			client.ui.hideConsole();
 		}
 	});

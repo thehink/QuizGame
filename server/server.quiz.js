@@ -26,6 +26,13 @@ server.quiz.setPlayerOffline = function(player){
 server.quiz.login = function(username, socket){
 	if(socket.player)
 		return 3;
+	
+	var prevUsername = username;
+		username = username.replace(/[^a-z0-9_.]/gi, '');
+	
+	
+	if(prevUsername != username)
+		console.log('Invalid username, ', prevUsername + ', changed to:' + username);
 		
 	var player = server.quiz.getUser(username);
 	if(!player){

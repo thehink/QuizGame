@@ -10,6 +10,7 @@ server.lobby  = function(q){
 	this.timeleft = 0;
 	this.running = false;
 	this.paused = false;
+	this.notifyTime = 10000;
 	
 	if(q)
 		this.loadQuiz(q);
@@ -55,14 +56,14 @@ server.lobby.prototype.stop = function(){
 
 server.lobby.prototype.waitNextQuestion = function(){
 	this.pause();
-	var notifyTime = 6000;
-	io.sockets.in(this.roomId).emit('notifyNextQuestion', notifyTime);
+	this.notifyStarted = Date.now();
+	io.sockets.in(this.roomId).emit('notifyNextQuestion', this.notifyTime);
 		
 	var that = this;
 	setTimeout(function(){
 			that.resume();
 			that.nextQuestion();
-	}, notifyTime);
+	}, this.notifyTime);
 }
 
 server.lobby.prototype.nextQuestion = function(){
@@ -157,14 +158,18 @@ server.lobby.prototype.join = function(player){
 		if(!this.player_stats[player.id])
 			this.player_stats[player.id] = 0;
 		
-		if(this.running){
+		if(this.running && !this.paused){
 			var cq = this.getCurrentQuestion();
 			player.socket.emit('quizQuestion', {
 				num: this.currentQuestion,
 				question: cq.question,
 				answers: cq.answers,
+				points: cq.points,
 				time: cq.time,
 			});	
+		}else if(this.running){
+			var cq = this.getCurrentQuestion();
+			player.socket.emit('notifyNextQuestion', this.notifyTime - Date.now() + this.notifyStarted);
 		}
 		
 		return true;

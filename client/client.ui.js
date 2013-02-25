@@ -63,9 +63,8 @@ client.ui.setModal = function(title, content, buttons){
 		var btn = $('<input id="join-button" type="button" value="'+i+'"/>');
 		var btnClickEvent = buttons[i];
 		btn.click(function(){
-			if(btnClickEvent()){
-				$("#modal-overlay").fadeOut();
-			}
+			if(btnClickEvent())
+				$("#modal-overlay").fadeOut();		//fade out if click function return true
 		});
 		$(".modal-box > .footer > .right").append(btn);
 	}
@@ -118,7 +117,7 @@ client.ui.setQuestion = function(data){
 
 client.ui.notifyNextQuestion = function(time){
 	$("#lobbyLink").removeClass('running').addClass("blinking");
-	client.ui.NextQuestionCountdown(time/1000);
+	client.ui.NextQuestionCountdown(Math.round(time/1000));
 
 };
 
@@ -156,8 +155,12 @@ client.ui.displayAnswers = function(answers, correct){
 		var an = answers[i];
 		if(an == correct){
 			$('#player-'+i).addClass('correct');
-			$('#player-'+i + ' .points').text('+'+ client.quiz.currentQuestion.points +' Points').fadeIn(800, function(){
-				$(this).fadeOut(3000);
+			$('#player-'+i + ' .points').text('+'+ client.quiz.currentQuestion.points +' Points').animate({
+				opacity: 1.0,
+			}, 800, function(){
+				$(this).animate({
+					opacity: 0,
+				}, 3000);
 			});
 		}else
 			$('#player-'+i).addClass('incorrect');
@@ -207,9 +210,18 @@ client.ui.setCountdown = function(pc, text){
 	
 		$('.rotate.left').css('-webkit-transform', 'rotate('+ pc*360 + 'deg)');
 		$('.rotate.right').css('-webkit-transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
+		
+		$('.rotate.left').css('-moz-transform', 'rotate('+ pc*360 + 'deg)');
+		$('.rotate.right').css('-moz-transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
+		
+		$('.rotate.left').css('transform', 'rotate('+ pc*360 + 'deg)');
+		$('.rotate.right').css('transform', 'rotate('+ ((pc-0.5)*360) + 'deg)');
 	
-	if(pc >= 0.5)
+	if(pc >= 0.5){
 		$('.rotate.left').css('-webkit-transform', 'rotate('+ 180 + 'deg)');
+		$('.rotate.left').css('-moz-transform', 'rotate('+ 180 + 'deg)');
+		$('.rotate.left').css('transform', 'rotate('+ 180 + 'deg)');
+	}
 };
 
 client.ui.quizEndOfRound = function(results){
@@ -229,7 +241,7 @@ client.ui.quizEndOfRound = function(results){
 		
 		for(var i in results){
 			var res = results[i],
-				rt = res.incorrect == 0 ? (res.correct / res.incorrect) : res.correct; 	//Do not divide by zero
+				rt = res.incorrect == 0 ? (res.correct || 0) : (res.correct / res.incorrect);
 			
 			if(points > res.points){
 				points = res.points;
