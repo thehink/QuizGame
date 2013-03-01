@@ -7,7 +7,7 @@ client.network.init = function(){
 };
 
 client.network.connect = function(){
-	var socket = client.network.socket = io.connect('http://'+window.location.hostname+'');
+	var socket = client.network.socket = io.connect('http://'+client.server+'');
 	
 	//connection
 	socket.on('connect', client.network.listeners.connect);
@@ -24,6 +24,9 @@ client.network.connect = function(){
 	socket.on('lobbyClosed', client.network.listeners.lobbyClosed);
 	socket.on('syncPlayers', client.network.listeners.syncPlayers);
 	
+	socket.on('listQuizes', client.network.listeners.listQuizes);
+	socket.on('listLobbies', client.network.listeners.listLobbies);
+	
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
 	socket.on('quizQuestion', client.network.listeners.quizQuestion);
@@ -37,8 +40,7 @@ client.network.connect = function(){
 	socket.on('playerJoin', client.network.listeners.playerJoin);
 	socket.on('playerStatus', client.network.listeners.playerStatus);
 	socket.on('playerLeave', client.network.listeners.playerLeave);
-	
-	console.log("connected");
+
 };
 
 client.network.join = function(username){
@@ -68,11 +70,15 @@ client.network.listeners = {};
 
 client.network.listeners.connect = function(data){
 	client.network.connected = true;
+	client.connected();
 	//client.dispatch('connected');
 };
 
 client.network.listeners.disconnect = function(data){
 	client.network.connected = false;
+	
+	client.ui.setModal('F√∂rlorade kontakten med servern - √Öteransluter', '<div class="loader"></div>', {});
+	
 	//client.dispatch('disconnected');
 };
 
@@ -83,22 +89,40 @@ client.network.listeners.disconnect = function(data){
 client.network.listeners.joinResponse = function(data){
 	if(data == 1){
 		client.ui.hideJoin();
+		client.user = data;
+		if(History.getState().hash == "/"){
+			if(typeof data.lobby == "number"){
+				History.replaceState({state:1}, 'State 3', '/?lobby/' + data.lobby);
+			}else{
+				History.replaceState({state:1}, 'State 3', '/?quizes');
+			}
+		}else
+			client.onStateChange();
+			
 	}else{
 		switch(data){
 			case 2: 
-				alert("Anv‰ndarnamnet anv‰nds redan!");
+				alert("Anv√§ndarnamnet anv√§nds redan!");
 				break;
 			case 3: 
-				alert("Du ‰r redan inloggad med ett annat anv‰ndarnamn!");
+				alert("Du √§r redan inloggad med ett annat anv√§ndarnamn!");
 			break;
 			default:
-				alert("Fel pÂ servern!");
+				alert("Fel p√• servern!");
 		}
 	}
 };
 
 client.network.listeners.playerData = function(data){
 	client.setPlayer(data);
+};
+
+client.network.listeners.listQuizes = function(data){
+	client.ui.listQuizes(data);
+};
+
+client.network.listeners.listLobbies = function(data){
+	client.ui.listLobbies(data);
 };
 
 /*=================================

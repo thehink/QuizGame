@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 body{
-	background:url("../images/vidsite-bg.png");
+	background:url("../images/vidsite-bg.jpg");
 	margin:0;
 	padding:0;
 	text-shadow: rgba(255,255,255,0.2) 1px 1px;
@@ -97,7 +97,7 @@ a:hover{
 	margin: 0 auto;
 	width:300px;
 	height:102px;
-	background:url("../images/vidsite-bg.png");
+	background:url("../images/vidsite-bg.jpg");
 }
 
 #lobbyLink > .bg-overlay > div{
@@ -200,6 +200,14 @@ input[type=button]:active{
 	background:#090;
 }
 
+.loader{
+	display:block;
+	width:100px;
+	height:100px;
+	margin:20px auto;
+	background:url('../images/ajax-loader.gif');
+}
+
 /* 
 ===============================================================
  modal-box 
@@ -252,6 +260,38 @@ input[type=button]:active{
 
 #modal-overlay > .modal-box .left{
 	float:left;
+}
+
+
+.lobbies{
+	margin:0;
+	padding:0;
+}
+
+.lobbies > li{
+	border-top:1px solid #FFF;
+	border-bottom:1px solid #CCC;
+	background:rgba(0,0,0,.05);
+	padding:10px 20px;
+}
+
+.lobbies > li:last-child{
+	border-bottom:none;
+}
+
+.lobbies > li > h2{
+	margin:0;
+	padding:0;
+}
+
+.lobbies > li:hover{
+	background:rgba(0,0,0,.1);
+	cursor:pointer;
+}
+.lobbies > li:active{
+	border-top:1px solid #888;
+	background:rgba(0,0,0,.15);
+	cursor:pointer;
 }
 
 /* 
@@ -726,7 +766,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#feccb1', end
 .items > .item > a{
 	display:block;
 	padding:10px;
-	height:130px;
+	min-height:70px;
 	margin:10px 10px;
 	text-decoration:none;
 }

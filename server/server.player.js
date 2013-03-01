@@ -7,7 +7,7 @@ server.user = function(username){
 	this.correct = 0;
 	this.icRatio = 0;
 	this.connected = false;
-	this.currentLobby = {};
+	this.currentLobby = null;
 };
 
 server.user.prototype.getInfo = function(){
@@ -19,15 +19,18 @@ server.user.prototype.getInfo = function(){
 		incorrect: this.incorrect,
 		correct: this.correct,
 		icRatio: this.icRatio,
+		lobby: this.currentLobby ? this.currentLobby.id : false,
 	};
 };
 
 server.user.prototype.joinLobby = function(lobby){
-	lobby.join(this);
+	if(lobby)
+		lobby.join(this);
 	this.currentLobby = lobby;
 };
 
 server.user.prototype.leaveLobby = function(){
-	this.currentLobby.leave(this);
+	if(this.currentLobby)
+		this.currentLobby.leave(this);
 	this.currentLobby = false;
 };

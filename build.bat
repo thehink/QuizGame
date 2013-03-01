@@ -6,6 +6,7 @@ copy /b ^
 .\lib\*.js + ^
 client.js + ^
 client.*.js + ^
+.\ui\*.js + ^
 init.js ^
 .\..\client\client.build.js
 

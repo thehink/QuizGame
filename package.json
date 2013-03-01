@@ -4,7 +4,12 @@
     "scripts": {
         "start": "server.build.js"
     },
-    "version": "0.1.0-2",
+    "version": "0.1.1",
+    "homepage": "http://quizgame.jit.su/",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/thehink/QuizGame.git"
+    },
     "dependencies": {
         "socket.io": "0.9.11",
         "node-static": "0.6.4"

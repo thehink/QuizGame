@@ -1,3 +1,2 @@
-cd .\nodejs
-node .\..\server.build.js
+node server.build.js
 pause

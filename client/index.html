@@ -11,8 +11,58 @@
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="./socket.io/socket.io.js"></script>
 <script src="./client.build.js"></script>
+
+<script type="text/html" id="quizes_tmpl">
+  <div class="left_menu">
+      <h1>Quizes</h1>
+      <ul>
+        <li class="active"><a href="#">Aktiva</a></li>
+        <li><a href="#">...</a></li>
+        <li class="cat-separator">...</li>
+        <li><a href="#">...</a></li>
+      </ul>
+    </div>
+    <div class="right_content">
+      <div class="top-filter">
+        <input type="text"/>
+        <input type="button" value="Sök"/>
+      </div>
+      <div class="items">
+        
+
+      </div>
+    </div>
+</script>
+
+<script type="text/html" id="quiz_list_tmpl">
+<div id="quiz-<%=id%>" class="item"> <a href="#">
+          <h2><%=title%></h2>
+          <div class="info"><%=description%></div>
+          <div class="min-info">Frågor: <span class="black"><%=questions%>st</span> &middot; Svårighetsgrad: <span class="yellow"><%=difficulty%></span> &middot; Skapad av: <span class="blue"><%=creator%></span></div>
+          </a></div>
+</script>
+
+<script type="text/html" id="lobby_tmpl">
+ <table cellspacing="0" id="result-table">
+      <tbody><tr>
+        <th id="username-column">Användarnamn</th>
+        <th id="progress-column">Poäng</th>
+        <th id="win-column"></th>
+		<% for ( var i = 0; i < players.length; i++ ) { %>
+      </tr><tr id="player-<%=players[i].id%>" class="player-row"><td><%=players[i].username%></td><td class="progress-cell"><div class="progress-bar" style="width: <%=(100*players[i].points/client.quiz.currentQuiz.totalPoints)%>%;"><%=players[i].points%> Poäng</div></td><td><span class="points green"></span></td></tr>
+	  <% } %>
+    </tbody></table>
+</script>
+
+<script type="text/html" id="lobby_list_tmpl">
+<li id="lobby-<%=id%>">
+<h2><%=title%></h2>
+<div class="description">test</div>
+</li>
+</script>
+
+
 </head>
 <body>
 <div id="modal-overlay">
@@ -60,8 +110,7 @@
     </div>
     <div>
       <ul class="left-nav">
-        <li><a href="#">Lobbies</a> </li>
-        <li><a href="#">Hur man spelar</a> </li>
+        <li><a id="quizes-link" href="#">Quizes</a> </li>
       </ul>
       <ul class="right-nav">
         <li><a id="username" href="#">...</a>

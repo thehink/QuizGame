@@ -1,6 +1,8 @@
 {
     "title": "Kungar, Politik och kvinnor",
     "difficulty": "medium",
+	"creator": "Benjamin & Adam",
+	"description": "A quiz",
     "questions": [
         {
             "question": "Vilken svensk kung har titeln \"Karl med Guds nåde\"?",
@@ -127,18 +129,17 @@
             "time": 30
         },
         {
-            "question": "Vad heter den svenske kungen Sigismund far?",
+            "question": "Vem är bäst?",
             "answers": [
-                "Gustav II Adolf",
-                "Sten Sture den äldre",
-                "Johan III",
+                "Benjamin Rizk",
+                "Sten Sture den Sure",
                 "Adam Brodd"
             ],
             "correct": [
                 0
             ],
-            "points": 5,
-            "time": 30
+            "points": 50,
+            "time": 2
         }
     ]
 }

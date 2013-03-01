@@ -76,9 +76,14 @@ server.lobby.prototype.nextQuestion = function(){
 		points: cq.points,
 		time: cq.time,
 	});
+	
+	this.questionStarted = Date.now();
 
 	var that = this;
-	this.tick(cq.time);
+	setTimeout(function(){
+		that.endQuestion();
+	}, cq.time*1000);
+	//this.tick(cq.time);
 };
 
 server.lobby.prototype.endQuestion = function(){
@@ -89,6 +94,8 @@ server.lobby.prototype.endQuestion = function(){
 	for(var i in this.player_answers){
 		var pl = server.quiz.getUser(this.players[i]),
 			answer = this.player_answers[i];
+			
+			
 		if(cq.correct.indexOf(answer) > -1){
 			if(!this.player_stats[pl.id])
 				this.player_stats[pl.id] = 0;
@@ -148,7 +155,8 @@ server.lobby.prototype.getCurrentQuestion = function(){
 };
 
 server.lobby.prototype.join = function(player){
-	if(player && player.connected){
+	var player_joined = this.players.indexOf(player.id) > -1;
+	if(player && player.connected && !player_joined){
 		this.players.push(player.id);
 		player.socket.join(this.roomId);
 		player.socket.emit("joinLobby", this.getInfo());
@@ -166,6 +174,7 @@ server.lobby.prototype.join = function(player){
 				answers: cq.answers,
 				points: cq.points,
 				time: cq.time,
+				timeLeft: cq.time*1000 - Date.now() + this.questionStarted,
 			});	
 		}else if(this.running){
 			var cq = this.getCurrentQuestion();
@@ -195,6 +204,8 @@ server.lobby.prototype.getInfo = function(){
 		stats: this.player_stats,
 		players: this.getPlayersInfos(),
 		quiz: this.getQuizInfo(),
+		running: this.running,
+		question: this.currentQuestion,
 	};
 };
 
@@ -212,7 +223,6 @@ server.lobby.prototype.loadQuiz = function(qs){
 	this.quiz = qs;
 	this.questions = qs.questions.length;
 	this.quiz.totalPoints = 0;
-	
 	for(var i in qs.questions){
 		this.quiz.totalPoints += qs.questions[i].points;
 	}

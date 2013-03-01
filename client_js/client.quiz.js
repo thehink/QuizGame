@@ -38,13 +38,26 @@ client.quiz.setQuestion = function(data){
 	client.ui.setQuestion(data);
 };
 
+client.quiz.showLobby = function(id){
+	if(client.quiz.currentLobby.id == id){
+		client.ui.setLobbyPage(client.quiz.currentLobby);
+	}else{
+		client.network.emit("enterLobby", id);
+	}
+};
+
 client.quiz.setLobby = function(lobby){
 	client.quiz.currentLobby = lobby;
+	client.quiz.setQuiz(lobby.quiz);
+	client.quiz.showLobby(lobby.id);
+	
+	/*
 	client.quiz.syncPlayers(lobby.players);
 	client.quiz.setQuiz(lobby.quiz);
 	client.ui.setLobby(lobby);
 	
 	client.ui.setStats(lobby.stats);
+	*/
 };
 
 client.quiz.setQuiz = function(quiz){
@@ -64,10 +77,24 @@ client.quiz.update = function(username, status){
 	
 };
 
+client.quiz.setPageQuizes = function(category, data){
+	client.ui.setQuizesPage(category, data);
+	client.network.emit('getQuizes', {});
+};
+
+client.quiz.showLobbies = function(id){
+	client.network.emit('getLobbies', {id:id});
+};
+
 client.quiz.correctAnswer = function(data){
 	var correct = data.correct,
 		players = data.players,
 		stats = data.stats;
+		
+	for(var i in stats){
+		if(client.quiz.currentLobby.players[i])
+			client.quiz.currentLobby.players[i].points = stats[i];
+	}
 		
 	client.ui.setStats(stats);
 	client.ui.displayAnswers(players, correct);

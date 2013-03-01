@@ -4,11 +4,11 @@ var app = require('http'),
   io = require('socket.io'),
   fs = require('fs'),
   static = require('node-static');
-
 	
 var server = {
 	 isRunning: true,
 	 lastFrame: 0,
+	 debug: true,
  };
  
  
@@ -93,9 +93,14 @@ server.lobby.prototype.nextQuestion = function(){
 		points: cq.points,
 		time: cq.time,
 	});
+	
+	this.questionStarted = Date.now();
 
 	var that = this;
-	this.tick(cq.time);
+	setTimeout(function(){
+		that.endQuestion();
+	}, cq.time*1000);
+	//this.tick(cq.time);
 };
 
 server.lobby.prototype.endQuestion = function(){
@@ -106,6 +111,8 @@ server.lobby.prototype.endQuestion = function(){
 	for(var i in this.player_answers){
 		var pl = server.quiz.getUser(this.players[i]),
 			answer = this.player_answers[i];
+			
+			
 		if(cq.correct.indexOf(answer) > -1){
 			if(!this.player_stats[pl.id])
 				this.player_stats[pl.id] = 0;
@@ -165,7 +172,8 @@ server.lobby.prototype.getCurrentQuestion = function(){
 };
 
 server.lobby.prototype.join = function(player){
-	if(player && player.connected){
+	var player_joined = this.players.indexOf(player.id) > -1;
+	if(player && player.connected && !player_joined){
 		this.players.push(player.id);
 		player.socket.join(this.roomId);
 		player.socket.emit("joinLobby", this.getInfo());
@@ -183,6 +191,7 @@ server.lobby.prototype.join = function(player){
 				answers: cq.answers,
 				points: cq.points,
 				time: cq.time,
+				timeLeft: cq.time*1000 - Date.now() + this.questionStarted,
 			});	
 		}else if(this.running){
 			var cq = this.getCurrentQuestion();
@@ -212,6 +221,8 @@ server.lobby.prototype.getInfo = function(){
 		stats: this.player_stats,
 		players: this.getPlayersInfos(),
 		quiz: this.getQuizInfo(),
+		running: this.running,
+		question: this.currentQuestion,
 	};
 };
 
@@ -229,7 +240,6 @@ server.lobby.prototype.loadQuiz = function(qs){
 	this.quiz = qs;
 	this.questions = qs.questions.length;
 	this.quiz.totalPoints = 0;
-	
 	for(var i in qs.questions){
 		this.quiz.totalPoints += qs.questions[i].points;
 	}
@@ -274,7 +284,7 @@ server.network = {};
 
 server.network.init = function(){
 		var port = 80;
-		var clientFiles = new static.Server(__dirname+'\\client');
+		var clientFiles = new static.Server('./client/');
 	  
 		var httpServer = app.createServer(function (request, response) {
 			request.addListener('end', function () {
@@ -285,6 +295,9 @@ server.network.init = function(){
 		httpServer.listen(port);
 		io = io.listen(httpServer);
 		
+		if(!server.debug)
+			io.set('log level', 1);
+		
 		io.sockets.on('connection', function (socket) {
 		  
 		  socket.on('join', server.network.listeners.join);
@@ -292,7 +305,10 @@ server.network.init = function(){
 		  socket.on('leave', server.network.listeners.leave);
 		  //socket.on('answer', server.network.listeners.answer);
 		  socket.on('msg', server.network.listeners.msg);
-		  socket.on('getLobbies', server.network.listeners.ready);
+		  
+		  socket.on('getQuizes', server.network.listeners.getQuizes);
+		  
+		  socket.on('getLobbies', server.network.listeners.getLobbies);
 		  socket.on('createLobby', server.network.listeners.createLobby);
 		  socket.on('enterLobby', server.network.listeners.enterLobby);
 		  socket.on('setLobbySettings', server.network.listeners.ready);
@@ -353,10 +369,20 @@ server.network.listeners.cmd = function(cmd){
 server.network.listeners.answer = function(data){
 };
 
+server.network.listeners.getQuizes = function(data){
+	this.emit('listQuizes', server.quiz.getQuizesInfo(data));
+};
+
+server.network.listeners.getLobbies = function(data){
+	this.emit('listLobbies', server.quiz.getLobbies(data));
+};
+
 server.network.listeners.createLobby = function(data){
 };
 
 server.network.listeners.enterLobby = function(data){
+	if(this.player)
+		server.quiz.enterLobby(this.player, data);
 };
 
 server.network.listeners.ready = function(data){
@@ -372,7 +398,7 @@ server.network.listeners.msg = function(data){
 	this.correct = 0;
 	this.icRatio = 0;
 	this.connected = false;
-	this.currentLobby = {};
+	this.currentLobby = null;
 };
 
 server.user.prototype.getInfo = function(){
@@ -384,26 +410,31 @@ server.user.prototype.getInfo = function(){
 		incorrect: this.incorrect,
 		correct: this.correct,
 		icRatio: this.icRatio,
+		lobby: this.currentLobby ? this.currentLobby.id : false,
 	};
 };
 
 server.user.prototype.joinLobby = function(lobby){
-	lobby.join(this);
+	if(lobby)
+		lobby.join(this);
 	this.currentLobby = lobby;
 };
 
 server.user.prototype.leaveLobby = function(){
-	this.currentLobby.leave(this);
+	if(this.currentLobby)
+		this.currentLobby.leave(this);
 	this.currentLobby = false;
 };server.quiz = {
 	users: [],
 	usersByName: {},
 	lobbies: [],
+	quizes: [],
 };
 
 server.quiz.init = function(){
-	var quiz = require('./kings_questions.json');
+	var quiz = new server.aquiz(require('./kings_questions.json'));
 	server.quiz.lobbies.push(new server.lobby(quiz));
+	server.quiz.addQuiz(quiz);
 };
 
 server.quiz.setPlayerOnline = function(player, socket){
@@ -411,8 +442,7 @@ server.quiz.setPlayerOnline = function(player, socket){
 	player.connected = true;
 	player.socket.player = player;
 	server.network.ackPlayerOnline(player);
-	
-	player.joinLobby(server.quiz.lobbies[0]);
+	//player.joinLobby(server.quiz.lobbies[0]);
 };
 
 server.quiz.setPlayerOffline = function(player){
@@ -425,13 +455,14 @@ server.quiz.login = function(username, socket){
 		return 3;
 	
 	var prevUsername = username;
-		username = username.replace(/[^a-z0-9_.]/gi, '');
+		username = username.replace(/[^a-z0-9_-~|.]/gi, '');
 	
 	
 	if(prevUsername != username)
 		console.log('Invalid username, ', prevUsername + ', changed to:' + username);
 		
 	var player = server.quiz.getUser(username);
+	
 	if(!player){
 		player = server.quiz.addUser(username, socket);
 		server.quiz.setPlayerOnline(player, socket);
@@ -461,7 +492,7 @@ server.quiz.addUser = function(username, socket){
 
 server.quiz.getUser = function(id){
 	if(typeof id == 'string'){
-		if(server.quiz.usersByName[id])
+		if(typeof server.quiz.usersByName[id] == "number") //check type, if not 0 would return as false
 			return server.quiz.users[server.quiz.usersByName[id]];
 		else 
 			return false;
@@ -470,8 +501,50 @@ server.quiz.getUser = function(id){
 	}
 };
 
+
 server.quiz.switchUserRoom = function(id){
 	
+};
+
+server.quiz.enterLobby = function(player, id){
+	if(server.quiz.lobbies[id]){
+		if(!player.currentLobby || player.currentLobby.id != id){
+			player.leaveLobby();
+		}
+		player.joinLobby(server.quiz.lobbies[id]);
+	}
+};
+
+server.quiz.getLobbies = function(data){
+	var lobbies = [];
+	for(var i in server.quiz.lobbies){
+		var lobby = server.quiz.lobbies[i];
+		if(lobby.quiz.id == data.id)
+			lobbies.push(lobby.getInfo());
+	}
+	return lobbies;
+};
+
+server.quiz.getLobby = function(){
+	
+};
+
+server.quiz.getQuizesInfo = function(){
+	var infos = [];
+	for(var i in server.quiz.quizes){
+		var quiz = server.quiz.quizes[i];
+		infos.push(quiz.getInfo());
+	}
+	return infos;
+};
+
+server.quiz.addQuiz = function(quiz){
+	quiz.id = server.quiz.quizes.push(quiz)-1;
+	return quiz.id;
+};
+
+server.quiz.getQuiz = function(id){
+	return server.quiz.quizes[id];
 };
 
 server.quiz.getConnectedPlayers = function(){
@@ -490,4 +563,28 @@ server.quiz.addLobby = function(title, quiz){
 	lobby.roomId = 'room_' + lobby.id;
 };
 
-server.init();
+server.aquiz = function(quiz){
+	this.id = 0;
+	this.title = quiz.title || "";
+	this.description = quiz.description || "";
+	this.creator = quiz.creator || "";
+	this.difficulty = quiz.difficulty || "";
+	this.questions = quiz.questions || [];
+};
+
+server.aquiz.prototype = {
+	getInfo: function(){
+		return {
+			id: this.id,
+			title: this.title,
+			description: this.description,
+			creator: this.creator,
+			difficulty: this.difficulty,
+			questions: this.getNumQuestions(),
+		}
+	},
+	
+	getNumQuestions: function(){
+		return this.questions.length;
+	},
+};server.init();

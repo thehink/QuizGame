@@ -2,11 +2,13 @@ server.quiz = {
 	users: [],
 	usersByName: {},
 	lobbies: [],
+	quizes: [],
 };
 
 server.quiz.init = function(){
-	var quiz = require('./kings_questions.json');
+	var quiz = new server.aquiz(require('./kings_questions.json'));
 	server.quiz.lobbies.push(new server.lobby(quiz));
+	server.quiz.addQuiz(quiz);
 };
 
 server.quiz.setPlayerOnline = function(player, socket){
@@ -14,8 +16,7 @@ server.quiz.setPlayerOnline = function(player, socket){
 	player.connected = true;
 	player.socket.player = player;
 	server.network.ackPlayerOnline(player);
-	
-	player.joinLobby(server.quiz.lobbies[0]);
+	//player.joinLobby(server.quiz.lobbies[0]);
 };
 
 server.quiz.setPlayerOffline = function(player){
@@ -28,13 +29,14 @@ server.quiz.login = function(username, socket){
 		return 3;
 	
 	var prevUsername = username;
-		username = username.replace(/[^a-z0-9_.]/gi, '');
+		username = username.replace(/[^a-z0-9_-~|.]/gi, '');
 	
 	
 	if(prevUsername != username)
 		console.log('Invalid username, ', prevUsername + ', changed to:' + username);
 		
 	var player = server.quiz.getUser(username);
+	
 	if(!player){
 		player = server.quiz.addUser(username, socket);
 		server.quiz.setPlayerOnline(player, socket);
@@ -64,7 +66,7 @@ server.quiz.addUser = function(username, socket){
 
 server.quiz.getUser = function(id){
 	if(typeof id == 'string'){
-		if(server.quiz.usersByName[id])
+		if(typeof server.quiz.usersByName[id] == "number") //check type, if not 0 would return as false
 			return server.quiz.users[server.quiz.usersByName[id]];
 		else 
 			return false;
@@ -73,8 +75,50 @@ server.quiz.getUser = function(id){
 	}
 };
 
+
 server.quiz.switchUserRoom = function(id){
 	
+};
+
+server.quiz.enterLobby = function(player, id){
+	if(server.quiz.lobbies[id]){
+		if(!player.currentLobby || player.currentLobby.id != id){
+			player.leaveLobby();
+		}
+		player.joinLobby(server.quiz.lobbies[id]);
+	}
+};
+
+server.quiz.getLobbies = function(data){
+	var lobbies = [];
+	for(var i in server.quiz.lobbies){
+		var lobby = server.quiz.lobbies[i];
+		if(lobby.quiz.id == data.id)
+			lobbies.push(lobby.getInfo());
+	}
+	return lobbies;
+};
+
+server.quiz.getLobby = function(){
+	
+};
+
+server.quiz.getQuizesInfo = function(){
+	var infos = [];
+	for(var i in server.quiz.quizes){
+		var quiz = server.quiz.quizes[i];
+		infos.push(quiz.getInfo());
+	}
+	return infos;
+};
+
+server.quiz.addQuiz = function(quiz){
+	quiz.id = server.quiz.quizes.push(quiz)-1;
+	return quiz.id;
+};
+
+server.quiz.getQuiz = function(id){
+	return server.quiz.quizes[id];
 };
 
 server.quiz.getConnectedPlayers = function(){

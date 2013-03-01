@@ -2,7 +2,7 @@ server.network = {};
 
 server.network.init = function(){
 		var port = 80;
-		var clientFiles = new static.Server(__dirname+'\\client');
+		var clientFiles = new static.Server('./client/');
 	  
 		var httpServer = app.createServer(function (request, response) {
 			request.addListener('end', function () {
@@ -13,6 +13,9 @@ server.network.init = function(){
 		httpServer.listen(port);
 		io = io.listen(httpServer);
 		
+		if(!server.debug)
+			io.set('log level', 1);
+		
 		io.sockets.on('connection', function (socket) {
 		  
 		  socket.on('join', server.network.listeners.join);
@@ -20,7 +23,10 @@ server.network.init = function(){
 		  socket.on('leave', server.network.listeners.leave);
 		  //socket.on('answer', server.network.listeners.answer);
 		  socket.on('msg', server.network.listeners.msg);
-		  socket.on('getLobbies', server.network.listeners.ready);
+		  
+		  socket.on('getQuizes', server.network.listeners.getQuizes);
+		  
+		  socket.on('getLobbies', server.network.listeners.getLobbies);
 		  socket.on('createLobby', server.network.listeners.createLobby);
 		  socket.on('enterLobby', server.network.listeners.enterLobby);
 		  socket.on('setLobbySettings', server.network.listeners.ready);
@@ -81,10 +87,20 @@ server.network.listeners.cmd = function(cmd){
 server.network.listeners.answer = function(data){
 };
 
+server.network.listeners.getQuizes = function(data){
+	this.emit('listQuizes', server.quiz.getQuizesInfo(data));
+};
+
+server.network.listeners.getLobbies = function(data){
+	this.emit('listLobbies', server.quiz.getLobbies(data));
+};
+
 server.network.listeners.createLobby = function(data){
 };
 
 server.network.listeners.enterLobby = function(data){
+	if(this.player)
+		server.quiz.enterLobby(this.player, data);
 };
 
 server.network.listeners.ready = function(data){
