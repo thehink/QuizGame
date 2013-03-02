@@ -68,10 +68,16 @@ server.network.listeners.leave = function(data){
 server.network.listeners.cmd = function(cmd){
 	switch(cmd){
 		case "/start":
-			server.quiz.lobbies[0].start();
+			if(this.player && this.player.currentLobby){
+				if(this.player.id == this.player.currentLobby.host)
+					this.player.currentLobby.start();
+			}
 		break;
 		case "/stop":
-			
+			if(this.player && this.player.currentLobby){
+				if(this.player.id == this.player.currentLobby.host)
+					this.player.currentLobby.stop();
+			}
 		break;
 		case "/pause":
 			
@@ -96,6 +102,8 @@ server.network.listeners.getLobbies = function(data){
 };
 
 server.network.listeners.createLobby = function(data){
+	if(this.player)
+		server.quiz.createLobby(this.player, data);
 };
 
 server.network.listeners.enterLobby = function(data){

@@ -27,6 +27,9 @@ client.network.connect = function(){
 	socket.on('listQuizes', client.network.listeners.listQuizes);
 	socket.on('listLobbies', client.network.listeners.listLobbies);
 	
+	socket.on('lobbyCreated', client.network.listeners.lobbyCreated);
+	socket.on('stopQuiz', client.network.listeners.stopQuiz);
+	
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
 	socket.on('quizQuestion', client.network.listeners.quizQuestion);
@@ -89,7 +92,6 @@ client.network.listeners.disconnect = function(data){
 client.network.listeners.joinResponse = function(data){
 	if(data == 1){
 		client.ui.hideJoin();
-		client.user = data;
 		if(History.getState().hash == "/"){
 			if(typeof data.lobby == "number"){
 				History.replaceState({state:1}, 'State 3', '/?lobby/' + data.lobby);
@@ -128,6 +130,10 @@ client.network.listeners.listLobbies = function(data){
 /*=================================
 			Quiz
 ==================================*/
+
+client.network.listeners.stopQuiz = function(){
+	client.ui.stop();
+};
 
 client.network.listeners.quizInfo = function(data){
 	client.ui.setQuiz(data);
@@ -170,6 +176,10 @@ client.network.listeners.leaveLobby = function(data){
 
 client.network.listeners.lobbyClosed = function(data){
 	alert("lobbyClosed");
+};
+
+client.network.listeners.lobbyCreated = function(id){
+	History.pushState({state:1}, 'Lobby', '/?lobby/' + id);
 };
 
 /*=================================

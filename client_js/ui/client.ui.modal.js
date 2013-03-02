@@ -6,12 +6,16 @@ client.ui.setModal = function(title, content, buttons){
 	for(var i in buttons){
 		var btn = $('<input id="join-button" type="button" value="'+i+'"/>');
 		var btnClickEvent = buttons[i];
-		btn.click(function(){
-			if(btnClickEvent())
+		btn.click(btnClickEvent, function(event){
+			if(event.data())
 				$("#modal-overlay").fadeOut();		//fade out if click function return true
 		});
 		$(".modal-box > .footer > .right").append(btn);
 	}
 	
 	$("#modal-overlay").fadeIn();
+};
+
+client.ui.hideModal = function(){
+	$("#modal-overlay").fadeOut();
 };

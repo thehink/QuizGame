@@ -1,0 +1,62 @@
+{
+    "title": "Dev qs",
+    "difficulty": "medium",
+	"creator": "Benjamin & Adam",
+	"description": "A quiz",
+    "questions": [
+        {
+            "question": "Vilket programmerings språk är denna sida programmerad med?",
+            "answers": [
+                "Javascript",
+                "Java",
+                "C++",
+                "C#"
+            ],
+            "correct": [
+                0
+            ],
+            "points": 5523,
+            "time": 6
+        },
+        {
+            "question": "Vad kallas mjukvaran bakom servern för denna sida?",
+            "answers": [
+                "Chrome",
+                "Xampp",
+                "Node.js",
+                "Apache"
+            ],
+            "correct": [
+                2
+            ],
+            "points": 2362,
+            "time": 6
+        },
+        {
+            "question": "vad heter utvecklaren bakom detta spel?",
+            "answers": [
+                "Sten Sture",
+                "Benjamin Rizk",
+                "Birger Jarl"
+            ],
+            "correct": [
+                1
+            ],
+            "points": 5725,
+            "time": 6
+        },
+        {
+            "question": "Hur många rader kod består detta projekt av?",
+            "answers": [
+                "100 rader",
+                "1000 rader",
+                "10000 rader"
+            ],
+            "correct": [
+                0
+            ],
+            "points": 9789,
+            "time": 6
+        }
+    ]
+}

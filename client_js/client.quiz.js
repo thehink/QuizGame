@@ -18,6 +18,7 @@ client.quiz.init = function(){
 
 client.quiz.join = function(player){
 	client.ui.addUser(player);
+	client.quiz.currentLobby.players.push(player);
 };
 
 client.quiz.leave = function(id){
@@ -38,6 +39,22 @@ client.quiz.setQuestion = function(data){
 	client.ui.setQuestion(data);
 };
 
+client.quiz.createLobby = function(){
+	var title = $('#input-lobby-title').val();
+	var desc = $('#input-lobby-desc').val();
+	
+	if(title.length < 1){
+		alert("Du måste skriva in en titel!");
+	}else{
+		client.network.emit("createLobby", {
+			id: client.currentQuizId,
+			title: title,
+			desc: desc,
+		});
+		client.ui.setModal("Skapar lobby", '<div class="loader"></div>', {});
+	}
+};
+
 client.quiz.showLobby = function(id){
 	if(client.quiz.currentLobby.id == id){
 		client.ui.setLobbyPage(client.quiz.currentLobby);
@@ -49,6 +66,7 @@ client.quiz.showLobby = function(id){
 client.quiz.setLobby = function(lobby){
 	client.quiz.currentLobby = lobby;
 	client.quiz.setQuiz(lobby.quiz);
+	client.ui.setLobby(lobby);
 	client.quiz.showLobby(lobby.id);
 	
 	/*

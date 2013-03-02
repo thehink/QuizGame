@@ -15,10 +15,12 @@ var server = {
  server.init = function(){
 	 server.network.init();
 	 server.quiz.init();
- };server.lobby  = function(q){
-	this.title = "Quiz";
+ };server.lobby  = function(q, data){
+	data = data || {};
+	this.title = data.title || "Quiz";
 	this.id = 0;
 	this.roomId = 'room_0';
+	this.host = data.host || 0;
 	this.questions = 0;
 	this.currentQuestion = 0;
 	this.players = [];
@@ -69,6 +71,18 @@ server.lobby.prototype.resume = function(){
 
 
 server.lobby.prototype.stop = function(){
+	clearTimeout(this.nqtimeout);
+	clearTimeout(this.qtimeout);
+	
+	io.sockets.in(this.roomId).emit('stopQuiz');
+	
+	this.endRound();
+	
+};
+
+server.lobby.prototype.setHost = function(player){
+	this.host = player.id;
+	io.sockets.in(this.roomId).emit('setLobbyHost', this.host);
 };
 
 server.lobby.prototype.waitNextQuestion = function(){
@@ -77,7 +91,7 @@ server.lobby.prototype.waitNextQuestion = function(){
 	io.sockets.in(this.roomId).emit('notifyNextQuestion', this.notifyTime);
 		
 	var that = this;
-	setTimeout(function(){
+	this.nqtimeout = setTimeout(function(){
 			that.resume();
 			that.nextQuestion();
 	}, this.notifyTime);
@@ -97,7 +111,7 @@ server.lobby.prototype.nextQuestion = function(){
 	this.questionStarted = Date.now();
 
 	var that = this;
-	setTimeout(function(){
+	this.qtimeout = setTimeout(function(){
 		that.endQuestion();
 	}, cq.time*1000);
 	//this.tick(cq.time);
@@ -214,6 +228,10 @@ server.lobby.prototype.leave = function(player){
 	}
 };
 
+server.lobby.prototype.disconnected = function(player){
+	
+};
+
 server.lobby.prototype.getInfo = function(){
 	return {
 		id: this.id,
@@ -223,6 +241,7 @@ server.lobby.prototype.getInfo = function(){
 		quiz: this.getQuizInfo(),
 		running: this.running,
 		question: this.currentQuestion,
+		host: this.host,
 	};
 };
 
@@ -350,10 +369,16 @@ server.network.listeners.leave = function(data){
 server.network.listeners.cmd = function(cmd){
 	switch(cmd){
 		case "/start":
-			server.quiz.lobbies[0].start();
+			if(this.player && this.player.currentLobby){
+				if(this.player.id == this.player.currentLobby.host)
+					this.player.currentLobby.start();
+			}
 		break;
 		case "/stop":
-			
+			if(this.player && this.player.currentLobby){
+				if(this.player.id == this.player.currentLobby.host)
+					this.player.currentLobby.stop();
+			}
 		break;
 		case "/pause":
 			
@@ -378,6 +403,8 @@ server.network.listeners.getLobbies = function(data){
 };
 
 server.network.listeners.createLobby = function(data){
+	if(this.player)
+		server.quiz.createLobby(this.player, data);
 };
 
 server.network.listeners.enterLobby = function(data){
@@ -433,6 +460,8 @@ server.user.prototype.leaveLobby = function(){
 
 server.quiz.init = function(){
 	var quiz = new server.aquiz(require('./kings_questions.json'));
+	server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
+	
 	server.quiz.lobbies.push(new server.lobby(quiz));
 	server.quiz.addQuiz(quiz);
 };
@@ -506,6 +535,17 @@ server.quiz.switchUserRoom = function(id){
 	
 };
 
+server.quiz.createLobby = function(player, data){
+	var quiz = server.quiz.quizes[data.id];
+	if(quiz && data.title){
+		var title = data.title.replace(/[^a-z0-9_-~|.]/gi, '');
+		var desc = data.desc.replace(/[^a-z0-9_-~|.]/gi, '');
+		var id = server.quiz.addLobby(quiz, {title: title, description: desc, host: player.id});
+		player.socket.emit('lobbyCreated', id);
+		//server.quiz.enterLobby(player, id);
+	}
+};
+
 server.quiz.enterLobby = function(player, id){
 	if(server.quiz.lobbies[id]){
 		if(!player.currentLobby || player.currentLobby.id != id){
@@ -557,10 +597,11 @@ server.quiz.getConnectedPlayers = function(){
 };
 
 
-server.quiz.addLobby = function(title, quiz){
-	var lobby = new server.quiz.lobby(quiz);
+server.quiz.addLobby = function(quiz, data){
+	var lobby = new server.lobby(quiz, data);
 	lobby.id = server.quiz.lobbies.push(lobby)-1;
 	lobby.roomId = 'room_' + lobby.id;
+	return lobby.id;
 };
 
 server.aquiz = function(quiz){

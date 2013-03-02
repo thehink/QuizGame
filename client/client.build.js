@@ -189,6 +189,7 @@ client.onStateChange = function(){
 				client.quiz.setPageQuizes(bits[1], bits[2]);
 			break;
 			case 'lobbies': 
+				client.currentQuizId = bits[1];
 				client.quiz.showLobbies(bits[1]);
 			break;
 			case 'lobby': 
@@ -222,6 +223,7 @@ client.enableListeners = function(){
 };
 
 client.setPlayer = function(data){
+	client.user = data;
 	$("#username").text(data.username);
 };
 
@@ -270,6 +272,9 @@ client.network.connect = function(){
 	
 	socket.on('listQuizes', client.network.listeners.listQuizes);
 	socket.on('listLobbies', client.network.listeners.listLobbies);
+	
+	socket.on('lobbyCreated', client.network.listeners.lobbyCreated);
+	socket.on('stopQuiz', client.network.listeners.stopQuiz);
 	
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
@@ -333,7 +338,6 @@ client.network.listeners.disconnect = function(data){
 client.network.listeners.joinResponse = function(data){
 	if(data == 1){
 		client.ui.hideJoin();
-		client.user = data;
 		if(History.getState().hash == "/"){
 			if(typeof data.lobby == "number"){
 				History.replaceState({state:1}, 'State 3', '/?lobby/' + data.lobby);
@@ -372,6 +376,10 @@ client.network.listeners.listLobbies = function(data){
 /*=================================
 			Quiz
 ==================================*/
+
+client.network.listeners.stopQuiz = function(){
+	client.ui.stop();
+};
 
 client.network.listeners.quizInfo = function(data){
 	client.ui.setQuiz(data);
@@ -416,6 +424,10 @@ client.network.listeners.lobbyClosed = function(data){
 	alert("lobbyClosed");
 };
 
+client.network.listeners.lobbyCreated = function(id){
+	History.pushState({state:1}, 'Lobby', '/?lobby/' + id);
+};
+
 /*=================================
 			Players
 ==================================*/
@@ -451,6 +463,7 @@ client.quiz.init = function(){
 
 client.quiz.join = function(player){
 	client.ui.addUser(player);
+	client.quiz.currentLobby.players.push(player);
 };
 
 client.quiz.leave = function(id){
@@ -471,6 +484,22 @@ client.quiz.setQuestion = function(data){
 	client.ui.setQuestion(data);
 };
 
+client.quiz.createLobby = function(){
+	var title = $('#input-lobby-title').val();
+	var desc = $('#input-lobby-desc').val();
+	
+	if(title.length < 1){
+		alert("Du måste skriva in en titel!");
+	}else{
+		client.network.emit("createLobby", {
+			id: client.currentQuizId,
+			title: title,
+			desc: desc,
+		});
+		client.ui.setModal("Skapar lobby", '<div class="loader"></div>', {});
+	}
+};
+
 client.quiz.showLobby = function(id){
 	if(client.quiz.currentLobby.id == id){
 		client.ui.setLobbyPage(client.quiz.currentLobby);
@@ -482,6 +511,7 @@ client.quiz.showLobby = function(id){
 client.quiz.setLobby = function(lobby){
 	client.quiz.currentLobby = lobby;
 	client.quiz.setQuiz(lobby.quiz);
+	client.ui.setLobby(lobby);
 	client.quiz.showLobby(lobby.id);
 	
 	/*
@@ -564,10 +594,18 @@ client.ui.showLogin = function(loginFunc){
 };
 
 client.ui.listLobbies = function(data){
-	client.ui.setModal('Lobbies &middot; <a href="#">Skapa en lobby</a>', '<ul id="list-lobbies" class="lobbies"></ul>', {Ok: function(){
+	client.ui.setModal('Lobbies &middot; <input id="create-lobby" type="button" value="Skapa en lobby"/>', '<ul id="list-lobbies" class="lobbies"></ul>', {Ok: function(){
 		History.back();
 		return true;
 	}});
+	
+	$('#create-lobby').click(function(){
+		client.ui.setModal('Skapa lobby', tmpl("create_lobby_tmpl", {}), {Ok: client.quiz.createLobby,
+		Avbryt: function(){
+			History.back();
+			return true;
+		}});
+	})
 	
 	
 	for(var i in data){
@@ -585,7 +623,7 @@ client.ui.listLobbies = function(data){
 	var pc = 100*player.points/client.quiz.currentQuiz.totalPoints;
 	
 	var html = '<tr id="player-'+player.id+'" class="player-row">';
-		html += '<td>'+player.username+'</td>'
+		html += '<td>'+player.username+''+(client.quiz.currentLobby.host == player.id ? ' <span class="blue">[Host]</span> ' : '')+'</td>'
 		html += '<td class="progress-cell"><div class="progress-bar" style="width:'+(pc||0)+'%;">'+player.points+' Poäng</div></td>';
         html += '<td><span class="points green"></span></td>';
 		html += '</tr>';
@@ -608,7 +646,18 @@ client.ui.syncPlayers = function(players){
 };
 
 client.ui.setLobbyPage = function(lobby){
+	$('#lobbyLink').show();
 	$('#main-content').removeClass('browse-page').html(tmpl("lobby_tmpl", lobby));
+	
+	if(client.quiz.currentLobby.host == client.user.id){
+		$('#host-control').show();
+		$('#toggle-button').click(function(){
+			client.network.sendCommand('/start');
+		});
+		$('#stop-button').click(function(){
+			client.network.sendCommand('/stop');
+		});
+	}
 };
 
 client.ui.updateLobby = function(){
@@ -641,6 +690,7 @@ client.ui.chooseAnswer = function(index){
 };
 
 client.ui.setQuestion = function(data){
+	$('#toggle-button').val("running").attr('disabled','');
 	$("#lobbyLink").addClass("running");
 	$("#question-title").text('Fråga ' + (data.num+1) + ' av ' + client.quiz.currentQuiz.questions + ', Ger ' + data.points + ' Poäng');
 	$("#question").text(data.question);
@@ -670,6 +720,7 @@ client.ui.setQuestion = function(data){
 };
 
 client.ui.notifyNextQuestion = function(time){
+	$('#toggle-button').val("running").attr('disabled','');
 	$("#lobbyLink").removeClass('running').addClass("blinking");
 	client.ui.NextQuestionCountdown(Math.round(time/1000));
 
@@ -685,7 +736,7 @@ client.ui.NextQuestionCountdown = function(time){
 		$("#lobbyLink").removeClass("blinking").addClass("running");
 		$("#quiz-title").text(client.quiz.currentQuiz.title);
 	}else
-		setTimeout(client.ui.NextQuestionCountdown, 1000);
+		client.ui.nqTimeOut = setTimeout(client.ui.NextQuestionCountdown, 1000);
 };
 
 client.ui.questionCountdown = function(time){
@@ -694,7 +745,7 @@ client.ui.questionCountdown = function(time){
 	
 	if(client.ui.qTimeLeft-- != 0){
 		client.ui.setCountdown(client.ui.qTimeLeft/client.quiz.timeLeft, client.ui.qTimeLeft);
-		setTimeout(client.ui.questionCountdown, 1000);
+		client.ui.qTimeOut = setTimeout(client.ui.questionCountdown, 1000);
 	}
 };
 
@@ -790,8 +841,18 @@ client.ui.setCountdown = function(pc, text){
 	}
 };
 
+client.ui.stop = function(){
+	clearTimeout(client.ui.nqTimeOut)
+	clearTimeout(client.ui.qTimeOut)
+		
+	$('#lobbyLink').removeClass('running blinking');
+	$("#quiz-title").text(client.quiz.currentQuiz.title);
+	client.ui.hideCountdown();
+};
+
 client.ui.quizEndOfRound = function(results){
-	$('#lobbyLink').removeClass('running');
+	$('#toggle-button').val("Starta").removeAttr('disabled');
+	$('#lobbyLink').removeClass('running blinking');
 	
 	var html = '<table cellspacing="0"><tr>';
 	 	html += '<th>Plats</th>';
@@ -831,12 +892,14 @@ client.ui.quizEndOfRound = function(results){
 };
 
 client.ui.quizReset = function(){
-	$('.player-row').css('width', 0);
-	
-	$('#answer_list').empty();
-	$("#question-title").text('Väntar på nästa fråga');
-	$(".answer-box > h2").text('Väntar på nästa fråga');
-	$("#question").text('');
+	setTimeout(function(){
+		$('.player-row .progress-bar').css('width', 0).text('0 Poäng');
+		
+		$('#answer_list').empty();
+		$("#question-title").text('Väntar på nästa fråga');
+		$(".answer-box > h2").text('Väntar på nästa fråga');
+		$("#question").text('');
+	}, 6000);
 };
 client.ui.setModal = function(title, content, buttons){
 	$(".modal-box > h1").html(title);
@@ -846,14 +909,18 @@ client.ui.setModal = function(title, content, buttons){
 	for(var i in buttons){
 		var btn = $('<input id="join-button" type="button" value="'+i+'"/>');
 		var btnClickEvent = buttons[i];
-		btn.click(function(){
-			if(btnClickEvent())
+		btn.click(btnClickEvent, function(event){
+			if(event.data())
 				$("#modal-overlay").fadeOut();		//fade out if click function return true
 		});
 		$(".modal-box > .footer > .right").append(btn);
 	}
 	
 	$("#modal-overlay").fadeIn();
+};
+
+client.ui.hideModal = function(){
+	$("#modal-overlay").fadeOut();
 };client.ui.setQuizesPage = function(category, quizes){
 	$("#main-content").addClass('browse-page');
 	$('#main-content').html(tmpl("quizes_tmpl", {}));

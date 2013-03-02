@@ -7,6 +7,8 @@ server.quiz = {
 
 server.quiz.init = function(){
 	var quiz = new server.aquiz(require('./kings_questions.json'));
+	server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
+	
 	server.quiz.lobbies.push(new server.lobby(quiz));
 	server.quiz.addQuiz(quiz);
 };
@@ -80,6 +82,17 @@ server.quiz.switchUserRoom = function(id){
 	
 };
 
+server.quiz.createLobby = function(player, data){
+	var quiz = server.quiz.quizes[data.id];
+	if(quiz && data.title){
+		var title = data.title.replace(/[^a-z0-9_-~|.]/gi, '');
+		var desc = data.desc.replace(/[^a-z0-9_-~|.]/gi, '');
+		var id = server.quiz.addLobby(quiz, {title: title, description: desc, host: player.id});
+		player.socket.emit('lobbyCreated', id);
+		//server.quiz.enterLobby(player, id);
+	}
+};
+
 server.quiz.enterLobby = function(player, id){
 	if(server.quiz.lobbies[id]){
 		if(!player.currentLobby || player.currentLobby.id != id){
@@ -131,9 +144,10 @@ server.quiz.getConnectedPlayers = function(){
 };
 
 
-server.quiz.addLobby = function(title, quiz){
-	var lobby = new server.quiz.lobby(quiz);
+server.quiz.addLobby = function(quiz, data){
+	var lobby = new server.lobby(quiz, data);
 	lobby.id = server.quiz.lobbies.push(lobby)-1;
 	lobby.roomId = 'room_' + lobby.id;
+	return lobby.id;
 };
 

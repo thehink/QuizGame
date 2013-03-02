@@ -35,6 +35,7 @@ client.onStateChange = function(){
 				client.quiz.setPageQuizes(bits[1], bits[2]);
 			break;
 			case 'lobbies': 
+				client.currentQuizId = bits[1];
 				client.quiz.showLobbies(bits[1]);
 			break;
 			case 'lobby': 
@@ -68,6 +69,7 @@ client.enableListeners = function(){
 };
 
 client.setPlayer = function(data){
+	client.user = data;
 	$("#username").text(data.username);
 };
 

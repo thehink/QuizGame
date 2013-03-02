@@ -1,7 +1,9 @@
-server.lobby  = function(q){
-	this.title = "Quiz";
+server.lobby  = function(q, data){
+	data = data || {};
+	this.title = data.title || "Quiz";
 	this.id = 0;
 	this.roomId = 'room_0';
+	this.host = data.host || 0;
 	this.questions = 0;
 	this.currentQuestion = 0;
 	this.players = [];
@@ -52,6 +54,18 @@ server.lobby.prototype.resume = function(){
 
 
 server.lobby.prototype.stop = function(){
+	clearTimeout(this.nqtimeout);
+	clearTimeout(this.qtimeout);
+	
+	io.sockets.in(this.roomId).emit('stopQuiz');
+	
+	this.endRound();
+	
+};
+
+server.lobby.prototype.setHost = function(player){
+	this.host = player.id;
+	io.sockets.in(this.roomId).emit('setLobbyHost', this.host);
 };
 
 server.lobby.prototype.waitNextQuestion = function(){
@@ -60,7 +74,7 @@ server.lobby.prototype.waitNextQuestion = function(){
 	io.sockets.in(this.roomId).emit('notifyNextQuestion', this.notifyTime);
 		
 	var that = this;
-	setTimeout(function(){
+	this.nqtimeout = setTimeout(function(){
 			that.resume();
 			that.nextQuestion();
 	}, this.notifyTime);
@@ -80,7 +94,7 @@ server.lobby.prototype.nextQuestion = function(){
 	this.questionStarted = Date.now();
 
 	var that = this;
-	setTimeout(function(){
+	this.qtimeout = setTimeout(function(){
 		that.endQuestion();
 	}, cq.time*1000);
 	//this.tick(cq.time);
@@ -197,6 +211,10 @@ server.lobby.prototype.leave = function(player){
 	}
 };
 
+server.lobby.prototype.disconnected = function(player){
+	
+};
+
 server.lobby.prototype.getInfo = function(){
 	return {
 		id: this.id,
@@ -206,6 +224,7 @@ server.lobby.prototype.getInfo = function(){
 		quiz: this.getQuizInfo(),
 		running: this.running,
 		question: this.currentQuestion,
+		host: this.host,
 	};
 };
 

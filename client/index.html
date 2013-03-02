@@ -44,13 +44,24 @@
 </script>
 
 <script type="text/html" id="lobby_tmpl">
+
+<div id="host-control">
+	<input id="toggle-button" type="button" value="Starta"/>
+	<input id="stop-button" type="button" value="Stoppa"/>
+</div>
+
  <table cellspacing="0" id="result-table">
       <tbody><tr>
         <th id="username-column">Användarnamn</th>
         <th id="progress-column">Poäng</th>
-        <th id="win-column"></th>
+        <th id="win-column"></th></tr>
 		<% for ( var i = 0; i < players.length; i++ ) { %>
-      </tr><tr id="player-<%=players[i].id%>" class="player-row"><td><%=players[i].username%></td><td class="progress-cell"><div class="progress-bar" style="width: <%=(100*players[i].points/client.quiz.currentQuiz.totalPoints)%>%;"><%=players[i].points%> Poäng</div></td><td><span class="points green"></span></td></tr>
+      <tr id="player-<%=players[i].id%>" class="player-row"><td>
+	  <%=players[i].username+(client.quiz.currentLobby.host == players[i].id ? ' <span class="blue">[Host]</span> ' : '')%>
+	  </td>
+	  <td class="progress-cell"><div class="progress-bar" style="width: <%=(100*players[i].points/client.quiz.currentQuiz.totalPoints)%>%;"><%=players[i].points%> Poäng
+	  </div></td>
+	  <td><span class="points green"></span></td></tr>
 	  <% } %>
     </tbody></table>
 </script>
@@ -60,6 +71,16 @@
 <h2><%=title%></h2>
 <div class="description">test</div>
 </li>
+</script>
+
+
+<script type="text/html" id="create_lobby_tmpl">
+<form class="create-lobby-form">
+<label>Titel</label>
+<input id="input-lobby-title" class="nice-text" type="text"/>
+<label>Beskrivning</label>
+<textarea id="input-lobby-desc" class="nice-text"></textarea>
+</form>
 </script>
 
 

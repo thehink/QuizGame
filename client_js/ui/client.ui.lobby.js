@@ -2,7 +2,7 @@ client.ui.addUser = function(player){
 	var pc = 100*player.points/client.quiz.currentQuiz.totalPoints;
 	
 	var html = '<tr id="player-'+player.id+'" class="player-row">';
-		html += '<td>'+player.username+'</td>'
+		html += '<td>'+player.username+''+(client.quiz.currentLobby.host == player.id ? ' <span class="blue">[Host]</span> ' : '')+'</td>'
 		html += '<td class="progress-cell"><div class="progress-bar" style="width:'+(pc||0)+'%;">'+player.points+' Poäng</div></td>';
         html += '<td><span class="points green"></span></td>';
 		html += '</tr>';
@@ -25,7 +25,18 @@ client.ui.syncPlayers = function(players){
 };
 
 client.ui.setLobbyPage = function(lobby){
+	$('#lobbyLink').show();
 	$('#main-content').removeClass('browse-page').html(tmpl("lobby_tmpl", lobby));
+	
+	if(client.quiz.currentLobby.host == client.user.id){
+		$('#host-control').show();
+		$('#toggle-button').click(function(){
+			client.network.sendCommand('/start');
+		});
+		$('#stop-button').click(function(){
+			client.network.sendCommand('/stop');
+		});
+	}
 };
 
 client.ui.updateLobby = function(){
@@ -58,6 +69,7 @@ client.ui.chooseAnswer = function(index){
 };
 
 client.ui.setQuestion = function(data){
+	$('#toggle-button').val("running").attr('disabled','');
 	$("#lobbyLink").addClass("running");
 	$("#question-title").text('Fråga ' + (data.num+1) + ' av ' + client.quiz.currentQuiz.questions + ', Ger ' + data.points + ' Poäng');
 	$("#question").text(data.question);
@@ -87,6 +99,7 @@ client.ui.setQuestion = function(data){
 };
 
 client.ui.notifyNextQuestion = function(time){
+	$('#toggle-button').val("running").attr('disabled','');
 	$("#lobbyLink").removeClass('running').addClass("blinking");
 	client.ui.NextQuestionCountdown(Math.round(time/1000));
 
@@ -102,7 +115,7 @@ client.ui.NextQuestionCountdown = function(time){
 		$("#lobbyLink").removeClass("blinking").addClass("running");
 		$("#quiz-title").text(client.quiz.currentQuiz.title);
 	}else
-		setTimeout(client.ui.NextQuestionCountdown, 1000);
+		client.ui.nqTimeOut = setTimeout(client.ui.NextQuestionCountdown, 1000);
 };
 
 client.ui.questionCountdown = function(time){
@@ -111,7 +124,7 @@ client.ui.questionCountdown = function(time){
 	
 	if(client.ui.qTimeLeft-- != 0){
 		client.ui.setCountdown(client.ui.qTimeLeft/client.quiz.timeLeft, client.ui.qTimeLeft);
-		setTimeout(client.ui.questionCountdown, 1000);
+		client.ui.qTimeOut = setTimeout(client.ui.questionCountdown, 1000);
 	}
 };
 
@@ -207,8 +220,18 @@ client.ui.setCountdown = function(pc, text){
 	}
 };
 
+client.ui.stop = function(){
+	clearTimeout(client.ui.nqTimeOut)
+	clearTimeout(client.ui.qTimeOut)
+		
+	$('#lobbyLink').removeClass('running blinking');
+	$("#quiz-title").text(client.quiz.currentQuiz.title);
+	client.ui.hideCountdown();
+};
+
 client.ui.quizEndOfRound = function(results){
-	$('#lobbyLink').removeClass('running');
+	$('#toggle-button').val("Starta").removeAttr('disabled');
+	$('#lobbyLink').removeClass('running blinking');
 	
 	var html = '<table cellspacing="0"><tr>';
 	 	html += '<th>Plats</th>';
@@ -248,10 +271,12 @@ client.ui.quizEndOfRound = function(results){
 };
 
 client.ui.quizReset = function(){
-	$('.player-row').css('width', 0);
-	
-	$('#answer_list').empty();
-	$("#question-title").text('Väntar på nästa fråga');
-	$(".answer-box > h2").text('Väntar på nästa fråga');
-	$("#question").text('');
+	setTimeout(function(){
+		$('.player-row .progress-bar').css('width', 0).text('0 Poäng');
+		
+		$('#answer_list').empty();
+		$("#question-title").text('Väntar på nästa fråga');
+		$(".answer-box > h2").text('Väntar på nästa fråga');
+		$("#question").text('');
+	}, 6000);
 };
