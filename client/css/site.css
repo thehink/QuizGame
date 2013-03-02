@@ -110,7 +110,7 @@ a:hover{
 #lobbyLink > .bg-overlay > div > a{
 	display:block;
 	height:38px;
-	padding:32px 11px;
+	padding:31px 11px;
 	text-align:center;
 	text-decoration:none;
 	font-size:28px;
@@ -122,10 +122,11 @@ a:hover{
 }
 
 #lobbyLink.active > .bg-overlay > div > a{
-	border:none;
+	border:1px solid transparent;
+	border-bottom:none;
 	text-shadow:rgba(0,0,0,.9) -1px -1px;
 	background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
 }
 
 #lobbyLink.blinking > .bg-overlay > div > a{
@@ -138,7 +139,7 @@ a:hover{
 
 #lobbyLink.running > .bg-overlay > div > a{
 	background:rgba(255,171,38,.3);
-	box-shadow:inset rgba(0,0,0,.7) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
 }
 
 #lobbyLink.green > .bg-overlay > div > a{
@@ -147,6 +148,28 @@ a:hover{
 	-webkit-animation: none;
 	-moz-animation: none;
 	animation: none;
+}
+
+#lobbyLink.unactive > .bg-overlay > div > a{
+	background:rgba(100,255,255,.1);
+	border:1px solid #222;
+	border-top:1px solid #ccc;
+	box-shadow:rgba(0,0,0,1) 0 0 7px;
+	-webkit-animation: none;
+	-moz-animation: none;
+	animation: none;
+}
+
+#lobbyLink.blinking > .bg-overlay > div > a{
+	background:rgba(255,0,0,.2);
+}
+
+#lobbyLink.green > .bg-overlay > div > a{
+	background:rgba(0,200,0,.2);
+}
+
+#lobbyLink.running > .bg-overlay > div > a{
+	background:rgba(255,171,38,.3);
 }
 
 #quiz-title{
@@ -884,50 +907,50 @@ footer{
 @-webkit-keyframes blink {
   0% {
     background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 
   50% {
     background:rgba(255,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px, rgba(255,0,0,1) 0 0 6px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px, rgba(255,0,0,1) 0 0 6px;
   }
   
   100% {
    background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 }
 
 @-moz-keyframes blink {
   0% {
     background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 
   50% {
     background:rgba(255,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px, rgba(255,0,0,1) 0 0 6px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px, rgba(255,0,0,1) 0 0 6px;
   }
   
   100% {
    background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 }
 
 @keyframes blink {
   0% {
     background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 
   50% {
     background:rgba(255,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px, rgba(255,0,0,1) 0 0 6px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px, rgba(255,0,0,1) 0 0 6px;
   }
   
   100% {
    background:rgba(0,0,0,.2);
-	box-shadow:inset rgba(0,0,0,.2) 0 0 4px;
+	box-shadow:inset rgba(0,0,0,.3) 0 0 10px 1px;
   }
 }

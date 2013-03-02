@@ -25,8 +25,9 @@ client.ui.syncPlayers = function(players){
 };
 
 client.ui.setLobbyPage = function(lobby){
-	$('#lobbyLink').show();
+	$('#lobbyLink').show().removeClass("unactive");
 	$('#main-content').removeClass('browse-page').html(tmpl("lobby_tmpl", lobby));
+	
 	
 	if(client.quiz.currentLobby.host == client.user.id){
 		$('#host-control').show();

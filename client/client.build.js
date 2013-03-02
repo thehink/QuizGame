@@ -184,6 +184,8 @@ client.onStateChange = function(){
 		var hash = State.cleanUrl.replace('http://'+window.location.hostname,'').replace('/?','');
 		var bits = hash.split('/');
 		
+		$('#lobbyLink').addClass("unactive");
+		
 		switch(bits[0]){
 			case 'quizes': 
 				client.quiz.setPageQuizes(bits[1], bits[2]);
@@ -220,6 +222,12 @@ client.enableListeners = function(){
 		History.pushState({}, 'Titel', '/?quizes');
 		return false;
 	});
+	
+	$('#lobbyLink > .bg-overlay a').click(function(){
+		var lobbyID = client.quiz.currentLobby.id;
+		History.pushState({}, 'Lobby', '/?lobby/' + lobbyID);
+		return false;
+	})
 };
 
 client.setPlayer = function(data){
@@ -662,8 +670,9 @@ client.ui.syncPlayers = function(players){
 };
 
 client.ui.setLobbyPage = function(lobby){
-	$('#lobbyLink').show();
+	$('#lobbyLink').show().removeClass("unactive");
 	$('#main-content').removeClass('browse-page').html(tmpl("lobby_tmpl", lobby));
+	
 	
 	if(client.quiz.currentLobby.host == client.user.id){
 		$('#host-control').show();
