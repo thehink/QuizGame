@@ -29,6 +29,7 @@ client.network.connect = function(){
 	
 	socket.on('lobbyCreated', client.network.listeners.lobbyCreated);
 	socket.on('stopQuiz', client.network.listeners.stopQuiz);
+	socket.on('changeHost', client.network.listeners.changeHost);
 	
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
@@ -127,6 +128,7 @@ client.network.listeners.listLobbies = function(data){
 	client.ui.listLobbies(data);
 };
 
+
 /*=================================
 			Quiz
 ==================================*/
@@ -180,6 +182,10 @@ client.network.listeners.lobbyClosed = function(data){
 
 client.network.listeners.lobbyCreated = function(id){
 	History.pushState({state:1}, 'Lobby', '/?lobby/' + id);
+};
+
+client.network.listeners.changeHost = function(data){
+	client.quiz.changeHost(data);
 };
 
 /*=================================

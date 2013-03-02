@@ -1,7 +1,8 @@
 server.quiz = {
+	linc: 0,
 	users: [],
 	usersByName: {},
-	lobbies: [],
+	lobbies: {},
 	quizes: [],
 };
 
@@ -9,7 +10,7 @@ server.quiz.init = function(){
 	var quiz = new server.aquiz(require('./kings_questions.json'));
 	server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
 	
-	server.quiz.lobbies.push(new server.lobby(quiz));
+	//server.quiz.lobbies.push(new server.lobby(quiz));
 	server.quiz.addQuiz(quiz);
 };
 
@@ -146,8 +147,14 @@ server.quiz.getConnectedPlayers = function(){
 
 server.quiz.addLobby = function(quiz, data){
 	var lobby = new server.lobby(quiz, data);
-	lobby.id = server.quiz.lobbies.push(lobby)-1;
+	lobby.id = server.quiz.linc++;
+	server.quiz.lobbies[lobby.id] = lobby;
+	//lobby.id = server.quiz.lobbies.push(lobby)-1;
 	lobby.roomId = 'room_' + lobby.id;
 	return lobby.id;
+};
+
+server.quiz.removeLobby = function(lobby){
+	delete server.quiz.lobbies[lobby.id];
 };
 

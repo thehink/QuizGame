@@ -652,6 +652,8 @@ td.progress-cell{
 	color:#000;
 	text-shadow:#B0E6FF 1px 1px 1px;
 	-webkit-transition:all 1s linear;
+	-moz-transition:all 1s linear;
+	transition:all 1s linear;
 	white-space:nowrap;
 }
 

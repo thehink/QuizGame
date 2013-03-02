@@ -22,7 +22,17 @@ client.quiz.join = function(player){
 };
 
 client.quiz.leave = function(id){
+	for(var i in client.quiz.currentLobby.players){
+		var player = client.quiz.currentLobby.players[i];
+		if(player.id == id)
+			client.quiz.currentLobby.players.splice(i, 1);
+	}
 	client.ui.removeUser(id);
+};
+
+client.quiz.changeHost = function(id){
+	client.quiz.currentLobby.host = id;
+	client.ui.setLobbyPage(client.quiz.currentLobby);
 };
 
 client.quiz.syncPlayers = function(players){

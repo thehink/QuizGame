@@ -188,6 +188,7 @@ server.lobby.prototype.getCurrentQuestion = function(){
 server.lobby.prototype.join = function(player){
 	var player_joined = this.players.indexOf(player.id) > -1;
 	if(player && player.connected && !player_joined){
+		clearTimeout(this.removedTimeout);
 		this.players.push(player.id);
 		player.socket.join(this.roomId);
 		player.socket.emit("joinLobby", this.getInfo());
@@ -223,6 +224,16 @@ server.lobby.prototype.leave = function(player){
 			io.sockets.in(this.roomId).emit('playerLeave', player.id);
 			player.socket.leave(this.roomId);
 			this.players.splice(i, 1);
+			if(this.players.length==0){
+				var that = this;
+				this.removedTimeout = setTimeout(function(){
+					server.quiz.removeLobby(that);
+				}, 30*1000);
+			}else if(player.id == this.host){
+				this.host = this.players[0];
+				io.sockets.in(this.roomId).emit('changeHost', this.host);
+			}
+				
 			break;
 		}
 	}
@@ -452,9 +463,10 @@ server.user.prototype.leaveLobby = function(){
 		this.currentLobby.leave(this);
 	this.currentLobby = false;
 };server.quiz = {
+	linc: 0,
 	users: [],
 	usersByName: {},
-	lobbies: [],
+	lobbies: {},
 	quizes: [],
 };
 
@@ -462,7 +474,7 @@ server.quiz.init = function(){
 	var quiz = new server.aquiz(require('./kings_questions.json'));
 	server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
 	
-	server.quiz.lobbies.push(new server.lobby(quiz));
+	//server.quiz.lobbies.push(new server.lobby(quiz));
 	server.quiz.addQuiz(quiz);
 };
 
@@ -599,9 +611,15 @@ server.quiz.getConnectedPlayers = function(){
 
 server.quiz.addLobby = function(quiz, data){
 	var lobby = new server.lobby(quiz, data);
-	lobby.id = server.quiz.lobbies.push(lobby)-1;
+	lobby.id = server.quiz.linc++;
+	server.quiz.lobbies[lobby.id] = lobby;
+	//lobby.id = server.quiz.lobbies.push(lobby)-1;
 	lobby.roomId = 'room_' + lobby.id;
 	return lobby.id;
+};
+
+server.quiz.removeLobby = function(lobby){
+	delete server.quiz.lobbies[lobby.id];
 };
 
 server.aquiz = function(quiz){

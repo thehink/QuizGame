@@ -275,6 +275,7 @@ client.network.connect = function(){
 	
 	socket.on('lobbyCreated', client.network.listeners.lobbyCreated);
 	socket.on('stopQuiz', client.network.listeners.stopQuiz);
+	socket.on('changeHost', client.network.listeners.changeHost);
 	
 	//quiz
 	socket.on('quizInfo', client.network.listeners.quizInfo);
@@ -373,6 +374,7 @@ client.network.listeners.listLobbies = function(data){
 	client.ui.listLobbies(data);
 };
 
+
 /*=================================
 			Quiz
 ==================================*/
@@ -428,6 +430,10 @@ client.network.listeners.lobbyCreated = function(id){
 	History.pushState({state:1}, 'Lobby', '/?lobby/' + id);
 };
 
+client.network.listeners.changeHost = function(data){
+	client.quiz.changeHost(data);
+};
+
 /*=================================
 			Players
 ==================================*/
@@ -467,7 +473,17 @@ client.quiz.join = function(player){
 };
 
 client.quiz.leave = function(id){
+	for(var i in client.quiz.currentLobby.players){
+		var player = client.quiz.currentLobby.players[i];
+		if(player.id == id)
+			client.quiz.currentLobby.players.splice(i, 1);
+	}
 	client.ui.removeUser(id);
+};
+
+client.quiz.changeHost = function(id){
+	client.quiz.currentLobby.host = id;
+	client.ui.setLobbyPage(client.quiz.currentLobby);
 };
 
 client.quiz.syncPlayers = function(players){
