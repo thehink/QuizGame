@@ -8,9 +8,8 @@ var app = require('http'),
 var server = {
 	 isRunning: true,
 	 lastFrame: 0,
-	 debug: true,
+	 debug: false,
  };
- 
  
  server.init = function(){
 	 server.network.init();

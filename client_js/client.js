@@ -1,7 +1,21 @@
+function fisherYates ( myArray ) {
+  var i = myArray.length, j, tempi, tempj;
+  if ( i == 0 ) return false;
+  while ( --i ) {
+     j = Math.floor( Math.random() * ( i + 1 ) );
+     tempi = myArray[i];
+     tempj = myArray[j];
+     myArray[i] = tempj;
+     myArray[j] = tempi;
+   }
+}
+
+
 client = {
 	id: -1,
 	server: window.location.hostname,
 	user: null,
+	school: false,
 };
 
 client.init = function(){
@@ -9,6 +23,7 @@ client.init = function(){
 	History.Adapter.bind(window,'statechange', client.onStateChange);
 
 	client.ui.setModal("Laddar", '<div class="loader"></div>', {});
+	
 
 	$.getScript('http://'+client.server+'/socket.io/socket.io.js', function() {
 			client.ui.setModal("Ansluter till servern", '<div class="loader"></div>', {});
@@ -18,7 +33,16 @@ client.init = function(){
      });
 };
 
+client.connect = function(){
+	
+};
+
 client.connected = function(){
+	var username = $.Storage.loadItem('player');
+	
+	if(typeof username == 'string' && username.length > 1){
+		client.network.join(username);
+	}else
 	client.ui.showLogin(client.join);
 };
 
@@ -44,7 +68,6 @@ client.onStateChange = function(){
 				client.quiz.showLobby(bits[1]);
 			break;
 		}
-		
 };
 
 client.enableListeners = function(){
@@ -73,11 +96,21 @@ client.enableListeners = function(){
 		var lobbyID = client.quiz.currentLobby.id;
 		History.pushState({}, 'Lobby', '/?lobby/' + lobbyID);
 		return false;
-	})
+	});
+	
+	$('#logout').click(function(){
+		client.quiz.currentLobby = {};
+		client.ui.hideLobbyLink();
+		$.Storage.deleteItem('player');
+		client.ui.showLogin(client.join);
+		$('.right-nav').hide();
+	});
 };
 
 client.setPlayer = function(data){
 	client.user = data;
+	$.Storage.saveItem('player', client.user.username);
+	$('.right-nav').show();
 	$("#username").text(data.username);
 };
 
@@ -85,6 +118,7 @@ client.join = function(){
 	var username = $("#username-input").val();
 	
 	if(username.length > 1){
+		client.ui.setModal("Loggar in", '<div class="loader"></div>', {});
 		client.network.join(username);
 	}else{
 		alert("Du måste skriva in ett användarnamn i rutan");

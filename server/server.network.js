@@ -20,6 +20,9 @@ server.network.init = function(){
 		  
 		  socket.on('join', server.network.listeners.join);
 		  socket.on('disconnect', server.network.listeners.leave);
+		  
+		  socket.on('ping', server.network.ping);
+		  
 		  socket.on('leave', server.network.listeners.leave);
 		  //socket.on('answer', server.network.listeners.answer);
 		  socket.on('msg', server.network.listeners.msg);
@@ -33,6 +36,10 @@ server.network.init = function(){
 		  socket.on('cmd', server.network.listeners.cmd);
 		});
 		
+};
+
+server.network.ping = function(){
+	this.emit("retPing");
 };
 
 server.network.ackPlayerOnline = function(player){

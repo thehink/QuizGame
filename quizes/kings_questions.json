@@ -2,7 +2,7 @@
     "title": "Kungar, Politik och kvinnor",
     "difficulty": "medium",
 	"creator": "Benjamin & Adam",
-	"description": "A quiz",
+	"description": "En quiz om allt och lite till.",
     "questions": [
         {
             "question": "Vilken svensk kung har titeln \"Karl med Guds nåde\"?",
@@ -16,7 +16,7 @@
                 0
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vilken svensk kung införde arvsmonarkin som har format Sverige som vi ser idag?",
@@ -30,7 +30,7 @@
                 2
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vad hette Sveriges första kung?",
@@ -43,7 +43,7 @@
                 1
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Har Sverige haft en kvinnlig statsminister?",
@@ -56,7 +56,7 @@
                 0
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vad hette Sveriges första statsminister?",
@@ -70,7 +70,7 @@
                 2
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vad hette det Svenska slottet som brann ner 7 Maj 1669?",
@@ -84,10 +84,10 @@
                 3
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
-            "question": "Hur många riksdagsledamöter finns det i Sveriges riksdag",
+            "question": "Hur många riksdagsledamöter finns det i Sveriges riksdag?",
             "answers": [
                 "349st",
                 "143st",
@@ -98,7 +98,7 @@
                 0
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vad heter den svenske kungen Sigismund far?",
@@ -106,19 +106,19 @@
                 "Gustav II Adolf",
                 "Sten Sture den äldre",
                 "Johan III",
-                "Gustav V"
+                "Gustav Vasa"
             ],
             "correct": [
                 2
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
             "question": "Vilket år fick kvinnor rösträtt i Sverige?",
             "answers": [
                 "De har ingen rösträtt",
-                "24 Maj 1919",
+                "24 Maj 1921",
                 "30 Mars 1945",
                 "14 Februari 1870"
             ],
@@ -126,20 +126,50 @@
                 1
             ],
             "points": 5,
-            "time": 30
+            "time": 20
         },
         {
-            "question": "Vem är bäst?",
+            "question": "Vilken politisk ideologi bygger på att alla tillhör en grupp och att staten har bäst förmåga att lösa ekonomiska och politiska problem?",
             "answers": [
-                "Benjamin Rizk",
-                "Sten Sture den Sure",
-                "Adam Brodd"
+                "Liberalism",
+                "Jag vet inte",
+                "Konservatism",
+                "Socialism",
+                "Nazism"
+                            ],
+            "correct": [
+                3
+            ],
+            "points": 10,
+            "time": 40
+        },
+		{
+            "question": "Vilken politisk ideologi och samhällsrörelse tjänade på att bibehålla diktaturen under general Francisco Franco som stadsskick under Spanska inbördeskriget 1936?",
+            "answers": [
+                "Nazism",
+                "Fascism",
+                "Frankism",
+                "Socialism"
             ],
             "correct": [
-                0
+                2
             ],
-            "points": 50,
-            "time": 2
+            "points": 10,
+            "time": 40
+        },
+		{
+            "question": "Vilken?",
+            "answers": [
+                "Nazism",
+                "Fascism",
+                "Frankism",
+                "Socialism"
+            ],
+            "correct": [
+                2
+            ],
+            "points": 5,
+            "time": 50
         }
     ]
 }

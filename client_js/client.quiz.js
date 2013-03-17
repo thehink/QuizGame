@@ -111,6 +111,7 @@ client.quiz.setPageQuizes = function(category, data){
 };
 
 client.quiz.showLobbies = function(id){
+	client.ui.setModal("Laddar", '<div class="loader"></div>', {});
 	client.network.emit('getLobbies', {id:id});
 };
 

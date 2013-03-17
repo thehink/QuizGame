@@ -70,7 +70,7 @@ client.ui.chooseAnswer = function(index){
 };
 
 client.ui.setQuestion = function(data){
-	$('#toggle-button').val("running").attr('disabled','');
+	$('#toggle-button').val("startad").attr('disabled','');
 	$("#lobbyLink").addClass("running");
 	$("#question-title").text('Fråga ' + (data.num+1) + ' av ' + client.quiz.currentQuiz.questions + ', Ger ' + data.points + ' Poäng');
 	$("#question").text(data.question);
@@ -81,16 +81,25 @@ client.ui.setQuestion = function(data){
 	 
 	 client.ui.showCountdown();
 	 
-	 var timeLeft = Math.round(data.timeLeft / 1000) || data.time;
+	 var timeLeft = Math.round(((data.timeLeft-client.network.latancy) || (data.time*1000-client.network.latancy))/ 1000);
 	 client.ui.setCountdown(timeLeft/client.quiz.timeLeft, client.quiz.timeLeft);
 	 client.ui.questionCountdown(timeLeft);
 	 
 	$("#answer_list").empty();
 	
+	var randArr = [];
+	
 	for(var i in data.answers){
-		var el = $('<li id="answer-' + i + '">' + data.answers[i] + '</li>');
+		randArr.push([i, data.answers[i]]);
+	}
+	
+	fisherYates(randArr);
+	
+	for(var i in randArr){
+		var q = randArr[i];
+		var el = $('<li id="answer-' + q[0] + '">' + q[1] + '</li>');
 		el.click(function(){
-			client.quiz.chooseAnswer($(this).index());
+			client.quiz.chooseAnswer(parseInt(this.id.replace('answer-', '')));
 		});
 		$("#answer_list").append(el);
 	}
@@ -100,7 +109,7 @@ client.ui.setQuestion = function(data){
 };
 
 client.ui.notifyNextQuestion = function(time){
-	$('#toggle-button').val("running").attr('disabled','');
+	$('#toggle-button').val("startad").attr('disabled','');
 	$("#lobbyLink").removeClass('running').addClass("blinking");
 	client.ui.NextQuestionCountdown(Math.round(time/1000));
 
@@ -167,7 +176,9 @@ client.ui.displayAnswers = function(answers, correct){
 	$('#lobbyLink a > div').hide();
 	$('#display-answer').show();
 	
-	if(correct.indexOf($('#answer_list > li.active').index()) > -1){
+	var chosen = $('#answer_list > li.active').attr('id');
+	
+	if(chosen && correct.indexOf(parseInt(chosen.replace('answer-',''))) > -1){
 		$('#display-answer').addClass('correct').text('Rätt svar!');
 		$('#lobbyLink').addClass('green');
 	}
@@ -240,7 +251,8 @@ client.ui.quizEndOfRound = function(results){
 		html += '<th>Poäng</th>';
 		html += '<th>Rätt</th>';
 		html += '<th>Fel</th>';
-		html += '<th>Rätt/Fel</th>';
+		html += '<th>Ej svarat</th>';
+		html += '<th>% Rätt</th>';
 		html += '</tr>';
 		
 		var points = 99999,
@@ -248,7 +260,7 @@ client.ui.quizEndOfRound = function(results){
 		
 		for(var i in results){
 			var res = results[i],
-				rt = res.incorrect == 0 ? (res.correct || 0) : (res.correct / res.incorrect);
+				rt = Math.round(100 * res.correct / client.quiz.currentQuiz.questions);
 			
 			if(points > res.points){
 				points = res.points;
@@ -260,7 +272,8 @@ client.ui.quizEndOfRound = function(results){
 			html += '<td class="green">'+ res.points +'</td>';
 			html += '<td class="green">'+ res.correct +'</td>';
 			html += '<td class="red">'+ res.incorrect +'</td>';
-			html += '<td>' + rt + '</td></tr>';
+			html += '<td>'+ (client.quiz.currentQuiz.questions - res.correct - res.incorrect) +'</td>';
+			html += '<td>' + rt + '%</td></tr>';
 		}
 		
     	html += '</table>';

@@ -7,11 +7,32 @@ server.quiz = {
 };
 
 server.quiz.init = function(){
-	var quiz = new server.aquiz(require('./kings_questions.json'));
-	server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
+	
+	var player = server.quiz.addUser('Benja');
+	
+	fs.readdir('./quizes', function(err, files) {		
+    	files.filter(function(file) {
+				return file.substr(-5) == '.json'; 
+		}).forEach(function(file) {
+			console.log("Loading quiz: " + file);
+			var qId = server.quiz.addQuiz(new server.aquiz(require('./quizes/'+ file)));
+			var id = server.quiz.createLobby(player, {
+				id: qId,
+				title: 'Kings Quiz',
+			});
+			server.quiz.lobbies[id].permanent = true;	
+		}); 
+    });
+	
+	
+	
+	//server.quiz.addLobby
+	
+	//var quiz = new server.aquiz(require('./kings_questions.json'));
+	//server.quiz.addQuiz(new server.aquiz(require('./silly_questions.json')));
 	
 	//server.quiz.lobbies.push(new server.lobby(quiz));
-	server.quiz.addQuiz(quiz);
+	//server.quiz.addQuiz(quiz);
 };
 
 server.quiz.setPlayerOnline = function(player, socket){
@@ -19,17 +40,19 @@ server.quiz.setPlayerOnline = function(player, socket){
 	player.connected = true;
 	player.socket.player = player;
 	server.network.ackPlayerOnline(player);
+	console.log(player.username + ' online');
 	//player.joinLobby(server.quiz.lobbies[0]);
 };
 
 server.quiz.setPlayerOffline = function(player){
 	player.connected = false;
 	server.network.ackPlayerOffline(player);
+	console.log(player.username + ' offline');
 };
 
 server.quiz.login = function(username, socket){
 	if(socket.player)
-		return 3;
+		server.quiz.setPlayerOffline(socket.player);
 	
 	var prevUsername = username;
 		username = username.replace(/[^a-z0-9_-~|.]/gi, '');
@@ -86,12 +109,15 @@ server.quiz.switchUserRoom = function(id){
 server.quiz.createLobby = function(player, data){
 	var quiz = server.quiz.quizes[data.id];
 	if(quiz && data.title){
-		var title = data.title.replace(/[^a-z0-9_-~|.]/gi, '');
-		var desc = data.desc.replace(/[^a-z0-9_-~|.]/gi, '');
+		var title = data.title.replace(/[^a-z0-9_-~ |.]/gi, '');
+		var desc = data.desc ? data.desc.replace(/[^a-z0-9_-~ |.]/gi, '') : '';
 		var id = server.quiz.addLobby(quiz, {title: title, description: desc, host: player.id});
-		player.socket.emit('lobbyCreated', id);
+		console.log('Lobby created: ' + title);
+		player.emit('lobbyCreated', id);
+		return id;
 		//server.quiz.enterLobby(player, id);
 	}
+	return -1;
 };
 
 server.quiz.enterLobby = function(player, id){
@@ -155,6 +181,7 @@ server.quiz.addLobby = function(quiz, data){
 };
 
 server.quiz.removeLobby = function(lobby){
+	console.log('Lobby ' + lobby.title + ' removed.');
 	delete server.quiz.lobbies[lobby.id];
 };
 

@@ -10,6 +10,11 @@ server.user = function(username){
 	this.currentLobby = null;
 };
 
+server.user.prototype.emit = function(key, data){
+	if(this.socket)
+		this.socket.emit(key, data);
+};
+
 server.user.prototype.getInfo = function(){
 	return {
 		id: this.id,

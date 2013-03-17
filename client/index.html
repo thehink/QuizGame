@@ -19,7 +19,7 @@
       <ul>
         <li class="active"><a href="#">Aktiva</a></li>
         <li><a href="#">...</a></li>
-        <li class="cat-separator">...</li>
+        <!--<li class="cat-separator">...</li>-->
         <li><a href="#">...</a></li>
       </ul>
     </div>
@@ -29,9 +29,10 @@
         <input type="button" value="Sök"/>
       </div>
       <div class="items">
-        
+        <div class="loader"></div>
 
       </div>
+	  <div class="clear"></div>
     </div>
 </script>
 
@@ -102,7 +103,7 @@
 </div>
 <header>
   <div id="logo"><img alt="crown" src="./images/crown.svg"/>
-    <div>Kings Quiz</div>
+    <div>Kings Quiz <span id="version">Alpha 0.2.1</span> <span id="latency">Ping 0ms</span></div>
   </div>
   <div class="dark-border"></div>
   <nav>
@@ -136,8 +137,7 @@
       <ul class="right-nav">
         <li><a id="username" href="#">...</a>
           <ul>
-            <li><a href="#">Konto</a></li>
-            <li><a href="#">Logga ut</a></li>
+            <li id="logout"><a href="#">Logga ut</a></li>
           </ul>
         </li>
       </ul>
@@ -147,15 +147,7 @@
 </header>
 <div id="main-wrapper">
   <section id="main-content">
-    <table cellspacing="0" id="result-table">
-      <!-- cellspacing='0' is important, must stay -->
-      <tr>
-        <th id="username-column">Användarnamn</th>
-        <th id="progress-column">Poäng</th>
-        <th id="win-column"></th>
-      </tr>
-      <!-- Table Header -->
-    </table>
+
   </section>
   <aside id="side-content">
     <div class="side-item question-box">

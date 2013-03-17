@@ -1,7 +1,7 @@
 {
     "title": "Dev qs",
     "difficulty": "medium",
-	"creator": "Benjamin & Adam",
+	"creator": "Benjamin",
 	"description": "A quiz",
     "questions": [
         {
@@ -49,13 +49,16 @@
             "question": "Hur många rader kod består detta projekt av?",
             "answers": [
                 "100 rader",
-                "1000 rader",
-                "10000 rader"
+                "1600 rader",
+                "15435 rader",
+                "15000 rader",
+                "17000 rader",
+                "19000 rader"
             ],
             "correct": [
-                0
+                1
             ],
-            "points": 9789,
+            "points": 34875,
             "time": 6
         }
     ]

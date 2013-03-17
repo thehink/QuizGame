@@ -4,7 +4,7 @@
     "scripts": {
         "start": "server.build.js"
     },
-    "version": "0.1.7",
+    "version": "0.2.2-3",
     "homepage": "http://quizgame.jit.su/",
     "repository": {
         "type": "git",
