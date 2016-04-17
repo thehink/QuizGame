@@ -15,7 +15,7 @@ client = {
 	id: -1,
 	server: window.location.hostname,
 	user: null,
-	school: false,
+	school: true,
 };
 
 client.init = function(){

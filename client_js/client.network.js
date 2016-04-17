@@ -135,7 +135,7 @@ client.network.listeners.joinResponse = function(data){
 	if(data == 1){
 		client.ui.hideJoin();
 		if(client.school){
-			History.replaceState({state:1}, 'Lobby', '/?lobby/' + 1);
+			History.replaceState({state:1}, 'Lobby', '/?lobby/0');
 		}else
 		if(History.getState().hash == "/"){
 			if(typeof data == "number"){

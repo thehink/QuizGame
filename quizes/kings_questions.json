@@ -158,18 +158,34 @@
             "time": 40
         },
 		{
-            "question": "Vilken?",
+            "question": "Vid vilken ålder blev kvinnor på 1850talet myndiga?",
             "answers": [
-                "Nazism",
-                "Fascism",
-                "Frankism",
-                "Socialism"
+                "25",
+                "18",
+                "15",
+                "19",
+				"22",
+				"23"
             ],
             "correct": [
-                2
+                0
             ],
             "points": 5,
-            "time": 50
+            "time": 20
+        },
+		{
+            "question": "Vilket år infördes jämställdhetslagen?",
+            "answers": [
+                "1400",
+                "2011",
+                "1945",
+                "1991"
+            ],
+            "correct": [
+                3
+            ],
+            "points": 5,
+            "time": 20
         }
     ]
 }

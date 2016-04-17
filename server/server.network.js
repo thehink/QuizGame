@@ -4,17 +4,25 @@ server.network.init = function(){
 		var port = 80;
 		var clientFiles = new static.Server('./client/');
 	  
-		var httpServer = app.createServer(function (request, response) {
-			request.addListener('end', function () {
+		var httpServer = http.createServer(function (request, response) {
+			/*request.addListener('end', function () {
+				console.log('request');
 				clientFiles.serve(request, response);
-			});
+			});*/
 		});
 		
-		httpServer.listen(port);
-		io = io.listen(httpServer);
+		httpServer.on('request', function (request, response) {
+			clientFiles.serve(request, response);
+		})
 		
+		httpServer.listen(port, function(){
+			//Callback triggered when server is successfully listening. Hurray!
+			console.log("Server listening on: http://localhost:%s", port);
+		});
+		io = io.listen(httpServer);
+		/*
 		if(!server.debug)
-			io.set('log level', 1);
+			io.set('log level', 1);*/
 		
 		io.sockets.on('connection', function (socket) {
 		  

@@ -1,6 +1,6 @@
 var modulesPath = "./nodejs/node_modules/";
 
-var app = require('http'),
+var http = require('http'),
   io = require('socket.io'),
   fs = require('fs'),
   static = require('node-static');
