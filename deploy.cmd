@@ -1,2 +1,0 @@
-jitsu deploy
-pause
