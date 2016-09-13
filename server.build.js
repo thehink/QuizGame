@@ -326,20 +326,20 @@ server.lobby.prototype.getPlayersInfos = function(){
 server.network = {};
 
 server.network.init = function(){
-		var port = 80;
+		var port = 8080;
 		var clientFiles = new static.Server('./client/');
-	  
+
 		var httpServer = http.createServer(function (request, response) {
 			/*request.addListener('end', function () {
 				console.log('request');
 				clientFiles.serve(request, response);
 			});*/
 		});
-		
+
 		httpServer.on('request', function (request, response) {
 			clientFiles.serve(request, response);
 		})
-		
+
 		httpServer.listen(port, function(){
 			//Callback triggered when server is successfully listening. Hurray!
 			console.log("Server listening on: http://localhost:%s", port);
@@ -348,27 +348,27 @@ server.network.init = function(){
 		/*
 		if(!server.debug)
 			io.set('log level', 1);*/
-		
+
 		io.sockets.on('connection', function (socket) {
-		  
+
 		  socket.on('join', server.network.listeners.join);
 		  socket.on('disconnect', server.network.listeners.leave);
-		  
+
 		  socket.on('ping', server.network.ping);
-		  
+
 		  socket.on('leave', server.network.listeners.leave);
 		  //socket.on('answer', server.network.listeners.answer);
 		  socket.on('msg', server.network.listeners.msg);
-		  
+
 		  socket.on('getQuizes', server.network.listeners.getQuizes);
-		  
+
 		  socket.on('getLobbies', server.network.listeners.getLobbies);
 		  socket.on('createLobby', server.network.listeners.createLobby);
 		  socket.on('enterLobby', server.network.listeners.enterLobby);
 		  socket.on('setLobbySettings', server.network.listeners.ready);
 		  socket.on('cmd', server.network.listeners.cmd);
 		});
-		
+
 };
 
 server.network.ping = function(){
@@ -420,13 +420,13 @@ server.network.listeners.cmd = function(cmd){
 			}
 		break;
 		case "/pause":
-			
+
 		break;
 		case "/msg":
-			
+
 		break;
 		default:
-		
+
 	}
 };
 
@@ -455,7 +455,8 @@ server.network.listeners.ready = function(data){
 };
 
 server.network.listeners.msg = function(data){
-};server.user = function(username){
+};
+server.user = function(username){
 	this.id = 0;
 	this.username = username || "Undefined";
 	this.points = 0;
